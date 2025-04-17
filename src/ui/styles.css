@@ -1,0 +1,84 @@
+/* nimbuspad-plus-plus/src/ui/styles.css */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #0A0E1A; /* dark-space */
+    color: #B0BEC5; /* cyber-gray */
+}
+
+.ide-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #1A1B23; /* dark-light */
+    border-bottom: 1px solid #2A2A2A;
+}
+
+.header-left .logo {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #00D4FF; /* neon-blue */
+}
+
+.header-right button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    background-color: #2A6DD1; /* blue */
+    color: #F5F5F5; /* light */
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.header-right button:hover {
+    background-color: #FF2D55; /* pink */
+}
+
+#nimbus-panel {
+    position: fixed;
+    right: 0;
+    top: 60px;
+    bottom: 0;
+    width: 300px;
+    background-color: #1A1B23; /* dark-light */
+    border-left: 1px solid #2A2A2A;
+    padding: 10px;
+    transition: transform 0.3s ease;
+}
+
+#nimbus-panel.collapsed {
+    transform: translateX(100%);
+}
+
+#nimbus-panel-toggle {
+    position: absolute;
+    left: -30px;
+    top: 10px;
+    width: 30px;
+    height: 30px;
+    background-color: #2A6DD1; /* blue */
+    color: #F5F5F5; /* light */
+    border: none;
+    border-radius: 4px 0 0 4px;
+    cursor: pointer;
+}
+
+#nimbus-chat-output {
+    height: 80%;
+    overflow-y: auto;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: #0B0C12; /* dark */
+    border-radius: 4px;
+}
+
+#nimbus-chat-input {
+    width: 100%;
+    padding: 5px;
+    background-color: #0B0C12; /* dark */
+    border: 1px solid #2A2A2A;
+    color: #F5F5F5; /* light */
+    border-radius: 4px;
+}

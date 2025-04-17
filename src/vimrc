@@ -1,0 +1,84 @@
+" nimbuspad-plus-plus/src/vimrc
+
+" Enable line numbers and relative line numbers (VSCode-like)
+set number
+set relativenumber
+
+" Enable syntax highlighting
+syntax on
+
+" Set tabs and indentation (VSCode defaults)
+set tabstop=4
+set shiftwidth=4
+set expandtab
+set autoindent
+
+" Enable mouse support
+set mouse=a
+
+" Set leader key to space (like VSCode)
+let mapleader = " "
+
+" Install plugins using vim-plug
+call plug#begin('~/.vim/plugged')
+
+" File explorer (like VSCode's sidebar)
+Plug 'preservim/nerdtree'
+
+" IntelliSense and autocompletion (like VSCode)
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+
+" Status bar (like VSCode's bottom bar)
+Plug 'vim-airline/vim-airline'
+Plug 'vim-airline/vim-airline-themes'
+
+" VSCode-like theme (we'll override with Nimbus colors)
+Plug 'tomasiser/vim-code-dark'
+
+" Git integration (like VSCode's source control)
+Plug 'tpope/vim-fugitive'
+
+call plug#end()
+
+" NERDTree configuration
+nnoremap <leader>e :NERDTreeToggle<CR>
+let NERDTreeShowHidden=1
+
+" coc.nvim configuration (IntelliSense)
+" Use Tab for completion
+inoremap <silent><expr> <TAB> pumvisible() ? "\<C-n>" : "\<TAB>"
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+" Use <C-Space> to trigger completion
+inoremap <silent><expr> <C-Space> coc#refresh()
+
+" Go to definition
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Set theme to VSCode-like with Nimbus overrides
+colorscheme codedark
+
+" Override with Nimbus color scheme
+highlight Normal guibg=#0A0E1A guifg=#B0BEC5  " dark-space and cyber-gray
+highlight LineNr guifg=#2A6DD1                " blue
+highlight CursorLine guibg=#1A1B23            " dark-light
+highlight Comment guifg=#A0A0A0               " gray-400
+highlight String guifg=#FF00E5                " neon-magenta
+highlight Function guifg=#00D4FF              " neon-blue
+
+" Enable cursor line (like VSCode)
+set cursorline
+
+" VSCode-like keybindings
+nnoremap <leader>ff :find<Space>              " Find file
+nnoremap <leader>fs :w<CR>                    " Save file
+nnoremap <leader>q :q<CR>                     " Quit
+nnoremap <leader>w :w<CR>                     " Write
+nnoremap <C-/> :Commentary<CR>                " Comment line
+
+" Switch to VSCode (placeholder for script to open VSCode)
+command! OpenVSCode :call system('code . &')
+nnoremap <leader>vc :OpenVSCode<CR>

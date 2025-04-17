@@ -1,0 +1,12 @@
+{
+  "name": "nimbuspad-plus-plus",
+  "version": "1.0.0",
+  "description": "A lightweight VSCode-like editor based on Vim",
+  "main": "bin/nimbuspad++",
+  "scripts": {
+    "start": "node bin/nimbuspad++"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

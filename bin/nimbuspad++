@@ -1,0 +1,48 @@
+#!/usr/bin/env node
+// nimbuspad-plus-plus/bin/nimbuspad++
+
+const express = require('express');
+const app = express();
+const path = require('path');
+
+// Serve static files (UI components)
+app.use(express.static(path.join(__dirname, '../src/ui')));
+
+// Serve the main IDE page
+app.get('/', (req, res) => {
+    res.send(`
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <title>Nimbuspad++</title>
+            <link rel="stylesheet" href="/styles.css">
+        </head>
+        <body>
+            <!-- Header -->
+            ${require('fs').readFileSync(path.join(__dirname, '../src/ui/header.html'), 'utf8')}
+
+            <!-- Nimbus.ai Panel -->
+            <div id="nimbus-panel">
+                <button id="nimbus-panel-toggle">&lt;</button>
+                <h3>Nimbus.ai</h3>
+                <div id="nimbus-chat-output"></div>
+                <input id="nimbus-chat-input" type="text" placeholder="Ask Nimbus.ai...">
+            </div>
+
+            <script src="/nimbus-panel.js"></script>
+        </body>
+        </html>
+    `);
+
+    // Launch Vim with custom config
+    const { exec } = require('child_process');
+    exec('vim -u ' + path.join(__dirname, '../src/vimrc'), (err) => {
+        if (err) {
+            console.error('Error launching Vim:', err);
+        }
+    });
+});
+
+app.listen(3000, () => {
+    console.log('Nimbuspad++ running at http://localhost:3000');
+});
