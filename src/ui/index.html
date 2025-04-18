@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Nimbuspad++</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/xterm/css/xterm.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/vs2015.min.css" />
+</head>
+<body>
+    <div id="editor-container">
+        <!-- Activity Bar -->
+        <div id="activity-bar">
+            <div class="icon menu-icon" onclick="toggleMenu('file-menu')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <line x1="4" y1="6" x2="20" y2="6" />
+                    <line x1="4" y1="12" x2="20" y2="12" />
+                    <line x1="4" y1="18" x2="20" y2="18" />
+                </svg>
+            </div>
+            <div class="icon file-icon explorer-toggle" onclick="toggleExplorer()">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                    <polyline points="14 2 14 8 20 8" />
+                </svg>
+            </div>
+            <div class="icon edit-icon" onclick="toggleMenu('edit-menu')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                </svg>
+            </div>
+            <div class="icon selection-icon" onclick="toggleMenu('selection-menu')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <path d="M3 3h18v18H3z" stroke-dasharray="2,2" />
+                </svg>
+            </div>
+            <div class="icon view-icon" onclick="toggleMenu('view-menu')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                    <circle cx="12" cy="12" r="3" />
+                </svg>
+            </div>
+            <div class="icon go-icon" onclick="toggleMenu('go-menu')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <polyline points="9 18 15 12 9 6" />
+                </svg>
+            </div>
+            <div class="icon run-icon" onclick="toggleMenu('run-menu')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+            </div>
+            <div class="icon terminal-icon" onclick="toggleMenu('terminal-menu')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <polyline points="4 17 10 11 4 5" />
+                    <line x1="12" y1="19" x2="20" y2="19" />
+                </svg>
+            </div>
+            <div class="icon help-icon" onclick="toggleMenu('help-menu')">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+                    <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
+            </div>
+            <div class="icon search-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+            </div>
+            <div class="icon source-control-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <circle cx="12" cy="5" r="3" />
+                    <circle cx="12" cy="19" r="3" />
+                    <line x1="12" y1="8" x2="12" y2="16" />
+                </svg>
+            </div>
+            <div class="icon run-debug-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <polygon points="5 3 19 12 5 21 5 3" />
+                    <circle cx="12" cy="12" r="2" />
+                </svg>
+            </div>
+            <div class="icon extensions-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <path d="M4 4h16v16H4z" />
+                    <path d="M4 12h16M12 4v16" />
+                </svg>
+            </div>
+            <div class="icon github-pr-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <path d="M9 18v-6a3 3 0 0 1 3-3h6" />
+                    <circle cx="6" cy="18" r="3" />
+                    <circle cx="18" cy="6" r="3" />
+                </svg>
+            </div>
+            <div class="icon accounts-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <circle cx="12" cy="8" r="4" />
+                    <path d="M4 20c0-4 4-6 8-6s8 2 8 6" />
+                </svg>
+            </div>
+            <div class="icon manage-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                    <circle cx="12" cy="12" r="3" />
+                    <path d="M19.4 15a9 9 0 1 1-14.8 0" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div id="sidebar" class="resizable">
+            <div id="sidebar-header">
+                <h3>Explorer</h3>
+                <div class="settings-icon">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#B0BEC5" stroke-width="2">
+                        <circle cx="12" cy="12" r="3" />
+                        <path d="M19.4 15a9 9 0 1 1-14.8 0" />
+                    </svg>
+                </div>
+            </div>
+            <div class="file-explorer">
+                <ul>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Editor Area -->
+        <div id="editor-area">
+            <div id="tabs">
+                <div class="tab active markdown-tab" data-file="INSTRUCTIONS.md">INSTRUCTIONS.md<div class="close-btn"></div></div>
+            </div>
+            <div id="editor-content">
+                <div id="terminal" style="display: none;"></div>
+                <div id="markdown-preview" style="flex: 1; overflow-y: auto; padding: 20px; background-color: #0A0E1A; color: #B0BEC5;"></div>
+                <div id="code-editor" style="display: none; flex: 1; overflow-y: auto; background-color: #1E1E1E;"></div>
+            </div>
+            <div id="terminal-panel" style="display: none;">
+                <div id="terminal-tabs"></div>
+                <div id="terminal-container"></div>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div id="status-bar">
+            <div class="left">
+                <span>Ln 1, Col 1</span>
+                <span>Spaces: 4</span>
+                <span>UTF-8</span>
+                <span class="terminal-btn" onclick="toggleTerminal()">Terminal</span>
+                <span class="instructions-btn" onclick="openInstructions()">Instructions</span>
+                <span class="nimbus-btn" onclick="toggleNimbusPanel()">Nimbus.ai</span>
+            </div>
+            <div class="right">
+                <span id="language-label">Markdown</span>
+                <span>Prettier</span>
+            </div>
+        </div>
+
+        <!-- Nimbus.ai Panel -->
+        <div id="nimbus-panel" class="resizable">
+            <div id="nimbus-tab">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" stroke-width="2">
+                    <path d="M21 8a9 9 0 0 0-9-8 9 9 0 0 0-6 2.3A8.9 8.9 0 0 0 3 8c0 5 6 9 9 9s9-4 9-9z"/>
+                    <path d="M12 12h3"/>
+                    <path d="M9 9h6"/>
+                    <path d="M9 15h3"/>
+                </svg>
+                <span>Nimbus.ai</span>
+            </div>
+            <button id="nimbus-panel-toggle" onclick="toggleNimbusPanel()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#F5F5F5" stroke-width="2">
+                    <path d="M21 8a9 9 0 0 0-9-8 9 9 0 0 0-6 2.3A8.9 8.9 0 0 0 3 8c0 5 6 9 9 9s9-4 9-9z"/>
+                    <path d="M12 12h3"/>
+                    <path d="M9 9h6"/>
+                    <path d="M9 15h3"/>
+                </svg>
+            </button>
+            <div id="nimbus-chat-output"></div>
+            <input id="nimbus-chat-input" type="text" placeholder="Ask Nimbus.ai...">
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/xterm/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="/scripts/editor.js"></script>
+    <script src="/scripts/nimbus-panel.js"></script>
+</body>
+</html>

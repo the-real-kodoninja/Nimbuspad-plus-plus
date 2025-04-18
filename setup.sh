@@ -9,6 +9,9 @@ echo "Installing vim-plug..."
 curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 
+echo "Cleaning up old plugins..."
+rm -rf ~/.vim/plugged
+
 echo "Installing plugins..."
 vim -u src/vimrc +PlugInstall +qall
 

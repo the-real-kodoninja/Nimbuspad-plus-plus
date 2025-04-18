@@ -1,55 +1,336 @@
-/* nimbuspad-plus-plus/src/ui/styles.css */
 body {
     margin: 0;
     font-family: 'Inter', sans-serif;
-    background-color: #0A0E1A; /* dark-space */
-    color: #B0BEC5; /* cyber-gray */
+    background-color: #0A0E1A;
+    color: #B0BEC5;
+    display: flex;
+    height: 100vh;
+    overflow: hidden;
 }
 
-.ide-header {
+#editor-container {
+    display: flex;
+    flex: 1;
+    flex-direction: row;
+    overflow: hidden;
+    position: relative;
+}
+
+#activity-bar {
+    width: 50px;
+    background-color: #0B0C12;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px 0;
+    border-right: 1px solid #2A2A2A;
+}
+
+#activity-bar .icon {
+    width: 40px;
+    height: 40px;
+    margin: 10px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+#activity-bar .icon svg {
+    stroke: #B0BEC5;
+    transition: stroke 0.3s;
+}
+
+#activity-bar .icon:hover svg {
+    stroke: #F5F5F5;
+}
+
+#sidebar {
+    width: 250px;
+    background-color: #0B0C12;
+    border-right: 1px solid #2A2A2A;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+#sidebar.resizable, #nimbus-panel.resizable {
+    resize: horizontal;
+    overflow: auto;
+    min-width: 200px;
+    max-width: 500px;
+}
+
+#sidebar-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 10px 20px;
-    background-color: #1A1B23; /* dark-light */
+    padding: 5px 10px;
+    background-color: #1A1B23;
     border-bottom: 1px solid #2A2A2A;
 }
 
-.header-left .logo {
-    font-size: 1.5rem;
-    font-weight: 600;
-    color: #00D4FF; /* neon-blue */
+#sidebar-header h3 {
+    font-size: 1rem;
+    color: #F5F5F5;
+    margin: 0;
 }
 
-.header-right button {
-    margin-left: 10px;
-    padding: 5px 10px;
-    background-color: #2A6DD1; /* blue */
-    color: #F5F5F5; /* light */
-    border: none;
-    border-radius: 4px;
+#sidebar-header .settings-icon {
+    width: 16px;
+    height: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     cursor: pointer;
+}
+
+#sidebar .file-explorer ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#sidebar .file-explorer li {
+    padding: 5px 10px;
+    color: #B0BEC5;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+#sidebar .file-explorer li:hover {
+    background-color: #1A1B23;
+    color: #F5F5F5;
+}
+
+#sidebar .file-explorer .folder::before {
+    content: '▶';
+    margin-right: 5px;
+    color: #2A6DD1;
+}
+
+#sidebar .file-explorer .folder.expanded::before {
+    content: '▼';
+}
+
+#sidebar .file-explorer .file::before {
+    content: '';
+    width: 16px;
+    height: 16px;
+    margin-right: 5px;
+}
+
+#sidebar .file-explorer .js-file::before {
+    content: url('data:image/svg+xml;utf8,<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23F7DF1E" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><text x="8" y="16" font-size="10" fill="%23F7DF1E">JS</text></svg>');
+}
+
+#sidebar .file-explorer .css-file::before {
+    content: url('data:image/svg+xml;utf8,<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%231572B6" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><text x="6" y="16" font-size="10" fill="%231572B6">CSS</text></svg>');
+}
+
+#sidebar .file-explorer .html-file::before {
+    content: url('data:image/svg+xml;utf8,<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23E34F26" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><text x="5" y="16" font-size="10" fill="%23E34F26">HTML</text></svg>');
+}
+
+#sidebar .file-explorer .python-file::before {
+    content: url('data:image/svg+xml;utf8,<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%233776AB" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><text x="7" y="16" font-size="10" fill="%233776AB">PY</text></svg>');
+}
+
+#sidebar .file-explorer .ruby-file::before {
+    content: url('data:image/svg+xml;utf8,<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23CC342D" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><text x="7" y="16" font-size="10" fill="%23CC342D">RB</text></svg>');
+}
+
+#sidebar .file-explorer .php-file::before {
+    content: url('data:image/svg+xml;utf8,<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23777BB4" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><text x="6" y="16" font-size="10" fill="%23777BB4">PHP</text></svg>');
+}
+
+#sidebar .file-explorer .nested {
+    padding-left: 20px;
+    display: none;
+}
+
+#sidebar .file-explorer .expanded + .nested {
+    display: block;
+}
+
+.context-menu div:hover {
+    background-color: #374151;
+}
+
+#editor-area {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+
+#tabs {
+    display: flex;
+    background-color: #1A1B23;
+    border-bottom: 1px solid #2A2A2A;
+    padding: 0 10px;
+}
+
+.tab {
+    padding: 5px 15px;
+    color: #B0BEC5;
+    border-right: 1px solid #2A2A2A;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
     transition: background-color 0.3s;
 }
 
-.header-right button:hover {
-    background-color: #FF2D55; /* pink */
+.tab.active {
+    background-color: #1E1E1E;
+    color: #F5F5F5;
+}
+
+.tab:hover {
+    background-color: #374151;
+}
+
+.tab .close-btn {
+    margin-left: 5px;
+    width: 16px;
+    height: 16px;
+    background: url('data:image/svg+xml;utf8,<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23B0BEC5" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>') no-repeat center;
+    cursor: pointer;
+}
+
+#editor-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    overflow: hidden;
+}
+
+#terminal {
+    flex: 1;
+    background-color: #1E1E1E;
+    min-height: 0;
+}
+
+#code-editor {
+    flex: 1;
+    overflow-y: auto;
+    background-color: #1E1E1E;
+    padding: 10px;
+    font-family: 'Fira Code', monospace;
+    font-size: 14px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+}
+
+#code-editor pre {
+    margin: 0;
+}
+
+#terminal-panel {
+    height: 200px;
+    background-color: #1E1E1E;
+    display: none;
+    flex-direction: column;
+    z-index: 1;
+}
+
+#terminal-panel.active {
+    display: flex;
+}
+
+#terminal-tabs {
+    display: flex;
+    background-color: #1A1B23;
+    padding: 5px 10px;
+    border-bottom: 1px solid #2A2A2A;
+}
+
+.terminal-tab {
+    padding: 5px 10px;
+    color: #B0BEC5;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.terminal-tab.active {
+    background-color: #0A0E1A;
+    color: #F5F5F5;
+}
+
+.terminal-tab.add-tab {
+    padding: 5px;
+    font-size: 1.2rem;
+}
+
+.terminal-tab .close-btn {
+    margin-left: 5px;
+    width: 16px;
+    height: 16px;
+    background: url('data:image/svg+xml;utf8,<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="%23B0BEC5" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>') no-repeat center;
+    cursor: pointer;
+}
+
+#terminal-container {
+    flex: 1;
+    background-color: #1E1E1E;
+}
+
+#status-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 10px;
+    background-color: #1A1B23;
+    border-top: 1px solid #2A2A2A;
+    color: #B0BEC5;
+    font-size: 0.9rem;
+    z-index: 1000;
+}
+
+#status-bar .left span, #status-bar .right span {
+    margin: 0 15px;
+    cursor: pointer;
+}
+
+#status-bar .instructions-btn:hover,
+#status-bar .terminal-btn:hover,
+#status-bar .nimbus-btn:hover {
+    color: #F5F5F5;
 }
 
 #nimbus-panel {
-    position: fixed;
-    right: 0;
-    top: 60px;
-    bottom: 0;
     width: 300px;
-    background-color: #1A1B23; /* dark-light */
+    background-color: #1A1B23;
     border-left: 1px solid #2A2A2A;
-    padding: 10px;
-    transition: transform 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    transition: width 0.3s ease;
+    z-index: 10;
 }
 
 #nimbus-panel.collapsed {
-    transform: translateX(100%);
+    width: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+#nimbus-tab {
+    display: flex;
+    align-items: center;
+    background-color: #FF69B4;
+    color: #F5F5F5;
+    padding: 5px 10px;
+    border-bottom: 1px solid #2A2A2A;
+}
+
+#nimbus-tab svg {
+    margin-right: 5px;
 }
 
 #nimbus-panel-toggle {
@@ -58,27 +339,38 @@ body {
     top: 10px;
     width: 30px;
     height: 30px;
-    background-color: #2A6DD1; /* blue */
-    color: #F5F5F5; /* light */
+    background-color: #FF69B4;
+    color: #F5F5F5;
     border: none;
     border-radius: 4px 0 0 4px;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#nimbus-panel-toggle svg {
+    transition: transform 0.3s ease;
+}
+
+#nimbus-panel.collapsed #nimbus-panel-toggle svg {
+    transform: rotate(180deg);
 }
 
 #nimbus-chat-output {
-    height: 80%;
+    flex: 1;
     overflow-y: auto;
     margin-bottom: 10px;
     padding: 10px;
-    background-color: #0B0C12; /* dark */
+    background-color: #0B0C12;
     border-radius: 4px;
 }
 
 #nimbus-chat-input {
-    width: 100%;
+    width: 100;
     padding: 5px;
-    background-color: #0B0C12; /* dark */
+    background-color: #0B0C12;
     border: 1px solid #2A2A2A;
-    color: #F5F5F5; /* light */
+    color: #F5F5F5;
     border-radius: 4px;
 }
