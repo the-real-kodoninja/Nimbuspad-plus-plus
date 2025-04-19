@@ -8,10 +8,25 @@
   },
   "dependencies": {
     "chokidar": "^4.0.3",
-    "express": "^4.18.2",
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "express-session": "^1.18.1",
+    "marked": "^15.0.8",
     "node-pty": "^1.0.0",
+    "simple-git": "^3.27.0",
     "ws": "^8.18.1",
     "xterm": "^5.3.0",
     "xterm-addon-fit": "^0.8.0"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/the-real-kodoninja/Nimbuspad-plus-plus.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/the-real-kodoninja/Nimbuspad-plus-plus/issues"
+  },
+  "homepage": "https://github.com/the-real-kodoninja/Nimbuspad-plus-plus#readme"
 }

@@ -1,21 +1,21 @@
-# Use the official Arch Linux base image
-FROM archlinux:base
+FROM archlinux:latest
 
-# Update the system and install essential development tools
+# Install dependencies
 RUN pacman -Syu --noconfirm && \
-    pacman -S --noconfirm base-devel git vim curl wget bash openssh && \
-    pacman -Scc --noconfirm
+    pacman -S --noconfirm vim git nodejs npm bash sudo
 
-# Set up a user for the IDE (to avoid running as root)
+# Create nimbususer and set up repos directory
 RUN useradd -m -s /bin/bash nimbususer && \
-    echo "nimbususer ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/nimbususer
+    mkdir -p /home/nimbususer/repos && \
+    chown nimbususer:nimbususer /home/nimbususer/repos && \
+    echo "nimbususer ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 
-# Switch to the nimbususer
+# Set the PS1 prompt directly, ensuring it's applied for all shells
+ENV PS1_DEFAULT='\u@\h:\w\$ '
+RUN echo 'if [ -n "$PS1" ]; then export PS1="$PS1"; else export PS1="$PS1_DEFAULT"; fi' >> /etc/profile && \
+    echo 'if [ -n "$PS1" ]; then export PS1="$PS1"; else export PS1="$PS1_DEFAULT"; fi' >> /home/nimbususer/.bashrc && \
+    echo 'if [ -n "$PS1" ]; then export PS1="$PS1"; else export PS1="$PS1_DEFAULT"; fi' >> /home/nimbususer/.bash_profile && \
+    chown nimbususer:nimbususer /home/nimbususer/.bashrc /home/nimbususer/.bash_profile
+
 USER nimbususer
 WORKDIR /home/nimbususer
-
-# Set the default shell prompt
-ENV PS1="user@nimbispad++:~ "
-
-# Command to keep the container running
-CMD ["/bin/bash"]

@@ -2,12 +2,16 @@ const fs = require('fs');
 const path = require('path');
 
 function loadMarkdownFiles() {
-    const instructionsContent = fs.readFileSync(path.join(__dirname, '../INSTRUCTIONS.md'), 'utf8');
-    const readmeContent = fs.readFileSync(path.join(__dirname, '../README.md'), 'utf8');
-    return {
-        'INSTRUCTIONS.md': instructionsContent,
-        'README.md': readmeContent
-    };
+    const markdownFiles = {};
+    const srcDir = path.join(__dirname, '../');
+    const files = fs.readdirSync(srcDir);
+    for (const file of files) {
+        if (file.endsWith('.md')) {
+            const content = fs.readFileSync(path.join(srcDir, file), 'utf8');
+            markdownFiles[file] = content;
+        }
+    }
+    return markdownFiles;
 }
 
 module.exports = { loadMarkdownFiles };
