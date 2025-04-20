@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nimbuspad++</title>
+    <link rel="stylesheet" href="/styles.css">
+    <link id="theme-stylesheet" rel="stylesheet" href="/np++_themes/nimbus-matte-black-1.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/monokai.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.1.0/xterm.min.css" />
+</head>
+<body>
+    <div class="container">
+        <div id="sidebar">
+            <div id="activity-bar"></div>
+            <div id="explorer" class="sidebar-content"></div>
+            <div id="search" class="sidebar-content" style="display: none;"></div>
+            <div id="git" class="sidebar-content" style="display: none;"></div>
+            <div id="debug" class="sidebar-side-content" style="display: none;"></div>
+            <div id="extensions" class="sidebar-content" style="display: none;"></div>
+            <div class="resize-handle"></div>
+        </div>
+        <div class="main">
+            <div class="tabs" id="tabs">
+                <div class="tab active" data-file="repos/INSTRUCTIONS.md">INSTRUCTIONS.md<div class="close-btn"></div></div>
+                <div class="tab" data-tab="preferences-tab-content">
+                    <svg width="16" height="16" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0 8zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm7-7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-2 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm2 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-7 2a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-6-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm2-6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-2-4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                    </svg>
+                    <span>Preferences</span>
+                    <div class="close-btn"></div>
+                </div>
+            </div>
+            <div class="editor">
+                <div id="code-editor" style="display: none;"></div>
+                <div id="markdown-preview">
+                    <div id="instructions-content">
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+            <div id="preferences-tab-content" style="display: none;"></div>
+            <div id="terminal-panel"></div>
+        </div>
+        <div id="nimbus-panel" class="nimbus-sidebar"></div>
+    </div>
+    <div id="status-bar"></div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.1.0/xterm.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm-addon-fit/0.7.0/xterm-addon-fit.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Define all components to fetch
+        const components = [
+            {
+                url: '/header.html',
+                elementId: 'header',
+                errorMessage: 'Header Load Error'
+            },
+            {
+                url: '/components/status_bar/status_bar.html',
+                elementId: 'status-bar',
+                errorMessage: 'Status Bar Load Error'
+            },
+            {
+                url: '/components/activity_bar/activity_bar.html',
+                elementId: 'activity-bar',
+                errorMessage: 'Activity Bar Load Error'
+            },
+            {
+                url: '/components/sidebar_panels/explorer/explorer.html',
+                elementId: 'explorer',
+                errorMessage: 'Explorer Load Error'
+            },
+            {
+                url: '/components/sidebar_panels/search/search.html',
+                elementId: 'search',
+                errorMessage: 'Search Load Error'
+            },
+            {
+                url: '/components/sidebar_panels/git/git.html',
+                elementId: 'git',
+                errorMessage: 'Git Load Error'
+            },
+            {
+                url: '/components/sidebar_panels/debug/debug.html',
+                elementId: 'debug',
+                errorMessage: 'Debug Load Error'
+            },
+            {
+                url: '/components/sidebar_panels/extensions/extensions.html',
+                elementId: 'extensions',
+                errorMessage: 'Extensions Load Error'
+            },
+            {
+                url: '/components/nimbus/nimbus_panel.html',
+                elementId: 'nimbus-panel',
+                errorMessage: 'Nimbus Panel Load Error'
+            },
+            {
+                url: '/components/preferences/preferences.html',
+                elementId: 'preferences-tab-content',
+                errorMessage: 'Preferences Load Error'
+            },
+            {
+                url: '/components/terminal/terminal.html',
+                elementId: 'terminal-panel',
+                errorMessage: 'Terminal Load Error'
+            }
+        ];
+
+        // Fetch all components
+        Promise.all(
+            components.map(component => {
+                return fetch(component.url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error(`Failed to load ${component.url}: ${response.status} ${response.statusText}`);
+                        }
+                        return response.text();
+                    })
+                    .then(data => {
+                        console.log(`Successfully fetched ${component.url}:`, data.substring(0, 100) + '...');
+                        const element = document.getElementById(component.elementId);
+                        if (element) {
+                            element.innerHTML = data;
+                            if (component.elementId === 'nimbus-panel' && element.classList.contains('active')) {
+                                element.style.width = '360px';
+                            }
+                            if (component.elementId === 'preferences-tab-content') {
+                                console.log('Preferences loaded');
+                            }
+                        } else {
+                            console.error(`Element with ID ${component.elementId} not found in DOM`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(`Nimbuspad++: ${component.errorMessage}:`, error);
+                    });
+            })
+        ).then(() => {
+            console.log('All components loaded successfully');
+            
+            // Define all scripts to load
+            const scripts = [
+                '/scripts/languageIcons.js',
+                '/scripts/fileTree.js',
+                '/scripts/editor.js',
+                '/scripts/terminal.js',
+                '/scripts/search.js',
+                '/scripts/git.js',
+                '/scripts/debug.js',
+                '/scripts/extensions.js',
+                '/scripts/nimbus.js',
+                '/scripts/menu.js',
+                '/scripts/sidebar.js',
+                '/scripts/preferences.js',
+                '/scripts/userProfile.js'
+            ];
+
+            // Dynamically load scripts in sequence
+            scripts.reduce((promise, src) => {
+                return promise.then(() => {
+                    return new Promise((resolve, reject) => {
+                        const script = document.createElement('script');
+                        script.src = src;
+                        script.onload = () => {
+                            console.log(`${src} loaded and initialized`);
+                            resolve();
+                        };
+                        script.onerror = () => {
+                            console.error(`Failed to load ${src}`);
+                            reject(new Error(`Failed to load ${src}`));
+                        };
+                        document.body.appendChild(script);
+                    });
+                });
+            }, Promise.resolve()).then(() => {
+                // After all scripts are loaded, call loadFileTree
+                setTimeout(() => {
+                    if (typeof loadFileTree === 'function') {
+                        loadFileTree();
+                    } else {
+                        console.error('loadFileTree is not defined');
+                    }
+                }, 100);
+            }).catch(error => {
+                console.error('Script loading failed:', error);
+            });
+        }).catch(error => {
+            console.error('Nimbuspad++: Component Loading Failed:', error);
+        });
+    });
+    </script>
+</body>
+</html>

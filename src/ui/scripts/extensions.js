@@ -1,44 +1,42 @@
 function initExtensions() {
-    const searchInput = document.querySelector('#extensions-search');
-    const extensionsList = document.querySelector('#extensions-list');
+    const searchInput = document.getElementById('extensions-search');
+    const extensionsList = document.getElementById('extensions-list');
 
-    if (!searchInput || !extensionsList) {
-        console.error('Nimbuspad++: Extensions elements not found');
-        return;
-    }
-
-    const mockExtensions = [
-        { name: 'Python', id: 'python', description: 'Python language support' },
-        { name: 'ESLint', id: 'eslint', description: 'JavaScript linting' },
-        { name: 'Prettier', id: 'prettier', description: 'Code formatter' }
+    // Mock list of VIM extensions (in a real app, you'd fetch this from the VS Code Marketplace API)
+    const vimExtensions = [
+        { name: 'Vim', publisher: 'vscodevim', description: 'Vim emulation for Visual Studio Code' },
+        { name: 'VSCodeVim', publisher: 'vscodevim', description: 'Another Vim emulation extension' },
+        { name: 'Vim Keymap', publisher: 'hiro-sun', description: 'Vim key bindings for VS Code' },
+        { name: 'Neo Vim', publisher: 'asvetliakov', description: 'Neo Vim integration for VS Code' }
     ];
 
-    function renderExtensions(extensions) {
+    function displayExtensions(extensions) {
         extensionsList.innerHTML = '';
         extensions.forEach(ext => {
-            const div = document.createElement('div');
-            div.innerHTML = `<strong>${ext.name}</strong>: ${ext.description} <button>Install</button>`;
-            div.querySelector('button').addEventListener('click', () => installExtension(ext.id));
-            extensionsList.appendChild(div);
+            const extDiv = document.createElement('div');
+            extDiv.textContent = `${ext.name} by ${ext.publisher} - ${ext.description}`;
+            extDiv.addEventListener('click', () => {
+                alert(`Installing ${ext.name}... (This is a mock action)`);
+            });
+            extensionsList.appendChild(extDiv);
         });
     }
 
-    searchInput.addEventListener('input', () => {
-        const query = searchInput.value.trim().toLowerCase();
-        const filtered = mockExtensions.filter(ext => 
-            ext.name.toLowerCase().includes(query) || 
-            ext.description.toLowerCase().includes(query)
-        );
-        renderExtensions(filtered);
+    searchInput.addEventListener('input', (e) => {
+        const query = e.target.value.toLowerCase();
+        if (query.includes('vim')) {
+            const filteredExtensions = vimExtensions.filter(ext =>
+                ext.name.toLowerCase().includes(query) ||
+                ext.description.toLowerCase().includes(query)
+            );
+            displayExtensions(filteredExtensions);
+        } else {
+            extensionsList.innerHTML = '<div>Type "vim" to search for VIM extensions...</div>';
+        }
     });
 
-    function installExtension(id) {
-        console.log(`Nimbuspad++: Installing extension ${id}`);
-        // Placeholder: Implement extension installation
-        alert(`Installed ${id}`);
-    }
-
-    renderExtensions(mockExtensions);
+    // Initial display
+    extensionsList.innerHTML = '<div>Type "vim" to search for VIM extensions...</div>';
 }
 
 document.addEventListener('DOMContentLoaded', initExtensions);

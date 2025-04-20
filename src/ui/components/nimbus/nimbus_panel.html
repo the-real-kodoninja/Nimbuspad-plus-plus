@@ -1,0 +1,26 @@
+<div class="nimbus-header">
+    <span>
+        <svg class="thunder-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#CCCCCC" stroke-width="2">
+            <path d="M19 12H12L15 3H9L5 12H12L9 21H15L19 12Z"/>
+        </svg>
+        Thunderhead
+    </span>
+    <div class="header-controls">
+        <div class="view-icon" title="View Options"></div>
+        <div class="threads-menu-icon" title="View Past Threads"></div>
+        <div class="settings-icon"></div>
+        <div class="toggle-nimbus" onclick="toggleNimbusPanel()"></div>
+    </div>
+</div>
+<div class="nimbus-content" id="nimbus-conversation">
+    <div class="conversation-message nimbus-message">
+        <span>Hello! I'm Thunderhead, your Nimbus.ai assistant. How can I assist you today?</span>
+    </div>
+</div>
+<div class="nimbus-input-area">
+    <div class="upload-icon file-upload-icon" title="Upload File"></div>
+    <div class="upload-icon photo-upload-icon" title="Upload Photo"></div>
+    <textarea id="nimbus-input" placeholder="Ask Thunderhead..." rows="3"></textarea>
+    <button id="nimbus-send-btn">Send</button>
+</div>
+<div class="nimbus-resize-handle"></div>

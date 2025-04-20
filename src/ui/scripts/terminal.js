@@ -1,3 +1,6 @@
+const { Terminal } = window;
+const { FitAddon } = window;
+
 let terminals = {};
 let fitAddons = {};
 let activeTerminalId = 0;
@@ -19,14 +22,26 @@ function initTerminal() {
         return;
     }
 
+    // Ensure initial state of terminal panel using a class
+    terminalPanel.classList.add('hidden');
+
     createTerminal(0, initialTerminalContent);
 
+    // Update terminal header to reflect user
+    const terminalHeader = document.querySelector('.terminal-header span');
+    if (terminalHeader) {
+        const user = 'kodoninja';
+        terminalHeader.textContent = user;
+    }
+
+    // Ensure the terminal link in the status bar works
     terminalLink.addEventListener('click', (e) => {
         e.preventDefault();
         console.log('Terminal link clicked, toggling terminal...');
         toggleTerminal();
     });
 
+    // Keyboard shortcut for toggling terminal
     document.addEventListener('keydown', (e) => {
         if (e.ctrlKey && e.key === '`') {
             e.preventDefault();
@@ -34,6 +49,12 @@ function initTerminal() {
             toggleTerminal();
         }
     });
+
+    // Add click listeners to the initial tab
+    const initialTab = terminalTabs.querySelector('.terminal-tab');
+    if (initialTab) {
+        initialTab.addEventListener('click', () => switchTerminal(parseInt(initialTab.dataset.terminalId)));
+    }
 }
 
 function createTerminal(terminalId, terminalContent) {
@@ -44,17 +65,20 @@ function createTerminal(terminalId, terminalContent) {
         terminal = new Terminal({
             cursorBlink: true,
             theme: {
-                background: '#1E1E1E',
-                foreground: '#CCCCCC'
+                background: getComputedStyle(document.body).getPropertyValue('--background').trim(),
+                foreground: getComputedStyle(document.body).getPropertyValue('--foreground').trim(),
             }
         });
 
-        fitAddon = new FitAddon.FitAddon();
+        fitAddon = new FitAddon();
         terminal.loadAddon(fitAddon);
         terminal.open(terminalContent);
         console.log(`Terminal ${terminalId} opened, fitting to container...`);
         fitAddon.fit();
         terminalContent.__xterm = terminal;
+
+        // Apply preferences
+        applyTerminalPreferences(terminal);
 
         terminal.write('Initializing terminal...\r\n');
         console.log(`Wrote initialization message to terminal ${terminalId}`);
@@ -94,7 +118,7 @@ function createTerminal(terminalId, terminalContent) {
 
     window.addEventListener('resize', () => {
         const terminalPanel = document.querySelector('.terminal-panel');
-        if (terminalPanel.style.display !== 'none' && terminalPanel.style.height !== '0px' && activeTerminalId === terminalId) {
+        if (!terminalPanel.classList.contains('hidden') && activeTerminalId === terminalId) {
             console.log(`Window resized, fitting terminal ${terminalId}...`);
             fitAddon.fit();
             sendResizeToBackend(terminalId);
@@ -104,20 +128,28 @@ function createTerminal(terminalId, terminalContent) {
     setupWebSocket(terminalId);
 }
 
+function applyTerminalPreferences(term) {
+    const fontSize = document.getElementById('terminal-font-size')?.value || '12px';
+    const cursorStyle = document.getElementById('terminal-cursor-style')?.value || 'block';
+
+    term.setOption('fontSize', parseInt(fontSize));
+    term.setOption('cursorStyle', cursorStyle);
+}
+
 function setupWebSocket(terminalId) {
     const terminalObj = terminals[terminalId];
     if (!terminalObj) return;
 
     const terminal = terminalObj.terminal;
     console.log(`Setting up WebSocket connection to ws://localhost:3000/terminal for terminal ${terminalId}...`);
-    terminal.write('Connecting to AviyonOS...\r\n');
+    terminal.write('Connecting to server...\r\n');
 
     let ws;
     try {
         ws = new WebSocket('ws://localhost:3000/terminal');
     } catch (err) {
         console.error(`Failed to create WebSocket for terminal ${terminalId}:`, err);
-        terminal.write(`\r\n<span style="color: red;">Unable to connect to AviyonOS: WebSocket creation failed - ${err.message}</span>\r\n`);
+        terminal.write(`\r\n<span style="color: red;">Unable to connect to server: WebSocket creation failed - ${err.message}</span>\r\n`);
         return;
     }
 
@@ -126,7 +158,12 @@ function setupWebSocket(terminalId) {
     ws.onopen = () => {
         console.log(`Nimbuspad++: WebSocket connection established for terminal ${terminalId}`);
         if (terminal) {
-            terminal.write('Connected to AviyonOS.\r\n');
+            terminal.write('Connected to server.\r\n');
+            // Send custom commands if any
+            const customCommands = document.getElementById('terminal-custom-commands')?.value;
+            if (customCommands) {
+                ws.send(customCommands + '\n');
+            }
         }
     };
 
@@ -140,14 +177,14 @@ function setupWebSocket(terminalId) {
     ws.onclose = () => {
         console.log(`Nimbuspad++: WebSocket connection closed for terminal ${terminalId}`);
         if (terminal) {
-            terminal.write('\r\nConnection to AviyonOS closed.\r\n');
+            terminal.write('\r\nConnection to server closed.\r\n');
         }
     };
 
     ws.onerror = (error) => {
         console.error(`Nimbuspad++: WebSocket error for terminal ${terminalId}:`, error);
         if (terminal) {
-            terminal.write(`\r\n<span style="color: red;">Unable to connect to AviyonOS: WebSocket error occurred - ${error.message}</span>\r\n`);
+            terminal.write(`\r\n<span style="color: red;">Unable to connect to server: WebSocket error occurred - ${error.message}</span>\r\n`);
         }
     };
 }
@@ -163,7 +200,7 @@ function sendCommandToBackend(terminalId, command) {
     } else {
         console.error(`WebSocket not connected for terminal ${terminalId}`);
         if (terminal) {
-            terminal.write('\r\n<span style="color: red;">Error: Not connected to AviyonOS.</span>\r\n');
+            terminal.write('\r\n<span style="color: red;">Error: Not connected to server.</span>\r\n');
         }
     }
 }
@@ -190,7 +227,11 @@ function toggleTerminal() {
         return;
     }
 
-    if (terminalPanel.style.display === 'none' || terminalPanel.style.height === '0px') {
+    const isHidden = terminalPanel.classList.contains('hidden');
+    console.log(`Toggling terminal, current hidden state: ${isHidden}`);
+
+    if (isHidden) {
+        terminalPanel.classList.remove('hidden');
         terminalPanel.style.display = 'block';
         terminalPanel.style.height = '200px';
         setTimeout(() => {
@@ -201,8 +242,10 @@ function toggleTerminal() {
             }
         }, 300);
     } else {
-        terminalPanel.style.height = '0px';
+        terminalPanel.classList.add('hidden');
         terminalPanel.style.display = 'none';
+        terminalPanel.style.height = '0';
+        console.log('Terminal hidden');
     }
 }
 
@@ -331,8 +374,48 @@ function restartTerminal() {
 
 window.clearTerminal = clearTerminal;
 window.showTerminalMenu = showTerminalMenu;
+window.toggleTerminal = toggleTerminal;
 
 document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM fully loaded, initializing terminal...');
     initTerminal();
+
+    // Apply terminal preferences on change
+    const terminalSettings = ['terminal-font-size', 'terminal-cursor-style', 'terminal-custom-commands'];
+    terminalSettings.forEach(id => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.addEventListener('change', () => {
+                const term = terminals[activeTerminalId]?.terminal;
+                if (term) {
+                    applyTerminalPreferences(term);
+                    // Re-apply custom commands if changed
+                    if (id === 'terminal-custom-commands') {
+                        const ws = terminals[activeTerminalId]?.ws;
+                        if (ws && ws.readyState === WebSocket.OPEN) {
+                            ws.send(element.value + '\n');
+                        }
+                    }
+                }
+            });
+        }
+    });
+
+    // Handle custom keybindings for terminal
+    document.addEventListener('keydown', (e) => {
+        const bindings = window.customKeybindings;
+        if (!bindings) return;
+
+        const keyCombo = [];
+        if (e.ctrlKey) keyCombo.push('ctrl');
+        if (e.altKey) keyCombo.push('alt');
+        if (e.shiftKey) keyCombo.push('shift');
+        keyCombo.push(e.key.toLowerCase());
+        const keyString = keyCombo.join('+');
+
+        if (bindings.key === keyString && bindings.command === 'openNewTerminal') {
+            e.preventDefault();
+            createNewTerminal();
+        }
+    });
 });

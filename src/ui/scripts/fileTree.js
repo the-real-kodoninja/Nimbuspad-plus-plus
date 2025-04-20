@@ -269,7 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const projectId = new URLSearchParams(window.location.search).get('projectId');
     loadFileTree(projectId);
 
-    const ws = new WebSocket('ws://localhost:3004');
+    const ws = new WebSocket('ws://localhost:3005'); // Changed from 3004 to 3005
     ws.onopen = () => console.log('Nimbuspad++: Connected to file system WebSocket');
     ws.onmessage = (event) => {
         const data = JSON.parse(event.data);

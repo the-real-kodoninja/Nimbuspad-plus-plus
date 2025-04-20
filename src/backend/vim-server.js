@@ -67,7 +67,7 @@ function startVimServer() {
     const server = require('http').createServer(app);
     const wss = new WebSocket.Server({ server, path: '/terminal' });
 
-    let fsPort = 3004;
+    let fsPort = 3005;
     const maxPortRetries = 10;
     let fsWss;
 
@@ -77,7 +77,7 @@ function startVimServer() {
             console.log(`File system WebSocket server running on ws://localhost:${port}`);
             return true;
         } catch (err) {
-            if (err.code === 'EADDRINUSE' && port < 3004 + maxPortRetries) {
+            if (err.code === 'EADDRINUSE' && port < fsPort + maxPortRetries) {
                 console.log(`Port ${port} in use, trying ${port + 1}...`);
                 return createFsWebSocketServer(port + 1);
             }
@@ -103,8 +103,26 @@ function startVimServer() {
         cookie: { secure: false }
     }));
 
-    app.use(express.static(path.join(__dirname, '../ui')));
+    // Add detailed request logging
+    app.use((req, res, next) => {
+        console.log(`Request for: ${req.url} (Method: ${req.method})`);
+        res.on('finish', () => {
+            console.log(`Response for ${req.url}: ${res.statusCode} ${res.statusMessage}`);
+        });
+        next();
+    });
+
+    // Serve static files directly from src/ui at the root
+    app.use(express.static(path.join(__dirname, '../../src/ui')));
+    // Serve root files (like INSTRUCTIONS.md)
+    app.use('/', express.static(path.join(__dirname, '../../')));
+
     app.use(express.json());
+
+    // Serve index.html
+    app.get('/', (req, res) => {
+        res.sendFile(path.join(__dirname, '../../src/ui/index.html'));
+    });
 
     app.get('/list', async (req, res) => {
         const dirPath = await getUserDir(req);

@@ -5,77 +5,193 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nimbuspad++</title>
     <link rel="stylesheet" href="/styles.css">
+    <link id="theme-stylesheet" rel="stylesheet" href="np++_themes/nimbus-matte-black-1.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/monokai.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.1.0/xterm.min.css" />
     <style>
-        .terminal-panel {
-            display: none;
-            height: 0;
-            transition: height 0.3s;
-            background: #1E1E1E;
+        /* Preferences Tab Styles */
+        #preferences-tab-content {
+            padding: 15px;
+            font-family: monospace;
+            overflow-y: auto;
+            height: calc(100% - 40px);
+            background-color: var(--panel-bg, #1e1e1e);
+            color: var(--foreground, #cccccc);
+        }
+        .preferences-section {
+            margin-bottom: 10px;
+            border-radius: 3px;
             overflow: hidden;
         }
-        .terminal-header {
-            background: #252526;
-            padding: 5px;
-            color: #CCCCCC;
+        .preferences-section h2 {
+            background-color: var(--panel-header-bg, #2a2a2a);
+            color: var(--foreground, #cccccc);
+            padding: 8px 12px;
+            margin: 0;
+            cursor: pointer;
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-start;
             align-items: center;
+            font-size: 14px;
+            font-weight: normal;
+            transition: background-color 0.2s;
         }
-        .terminal-content {
-            width: 100%;
-            height: 180px; /* Adjust based on terminal-panel height */
-            background: #1E1E1E;
+        .preferences-section h2:hover {
+            background-color: var(--hover-bg, #3a3a3a);
         }
-        .terminal-controls {
+        .preferences-section h2::after {
+            content: '▼';
+            font-size: 10px;
+            margin-left: auto;
+            transition: transform 0.3s;
+        }
+        .preferences-section.collapsed h2::after {
+            transform: rotate(-90deg);
+        }
+        .preferences-section-content {
+            padding: 12px;
+            background-color: var(--panel-bg, #1e1e1e);
+            display: block;
+        }
+        .preferences-section.collapsed .preferences-section-content {
+            display: none;
+        }
+        .preferences-item {
             display: flex;
-            gap: 5px;
+            align-items: center;
+            margin-bottom: 10px;
+            gap: 8px;
         }
-        .clear-terminal-icon {
-            cursor: pointer;
-            width: 16px;
-            height: 16px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="%23CCCCCC" stroke-width="2"><path d="M3 6h18M5 6v14a2 2 0 002 2h10a2 2 0 002-2V6M8 6V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>') no-repeat center;
+        .preferences-item label {
+            flex: 0 0 180px;
+            color: var(--foreground, #cccccc);
+            font-size: 13px;
+            position: relative;
         }
-        .terminal-tabs {
-            display: flex;
-            background-color: #2D2D2D;
-            border-bottom: 1px solid #3C3C3C;
+        .preferences-item label:hover .tooltip {
+            visibility: visible;
+            opacity: 1;
         }
-        .terminal-tab {
-            padding: 5px 10px;
-            font-size: 12px;
-            color: #CCCCCC;
-            cursor: pointer;
-            border-right: 1px solid #3C3C3C;
-        }
-        .terminal-tab.active {
-            background-color: #1E1E1E;
-            color: #FFFFFF;
-        }
-        .terminal-menu-icon {
-            cursor: pointer;
-            width: 16px;
-            height: 16px;
-            background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" fill="%23CCCCCC" viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>') no-repeat center;
-        }
-        .terminal-menu {
+        .tooltip {
+            visibility: hidden;
+            opacity: 0;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 3px;
+            padding: 4px 8px;
             position: absolute;
-            background-color: #252526;
-            border: 1px solid #3C3C3C;
-            padding: 5px;
-            z-index: 1000;
-            color: #CCCCCC;
-            font-size: 12px;
-            font-family: 'Fira Code', monospace;
+            z-index: 1;
+            top: -28px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            white-space: nowrap;
+            transition: opacity 0.2s;
         }
-        .terminal-menu div {
-            padding: 5px 10px;
+        .preferences-item input[type="text"],
+        .preferences-item input[type="url"],
+        .preferences-item input[type="file"],
+        .preferences-item select {
+            flex: 1;
+            padding: 4px;
+            background-color: var(--input-bg, #333);
+            color: var(--foreground, #cccccc);
+            border: none;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .preferences-item input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+        }
+        .preferences-item textarea {
+            width: 100%;
+            height: 80px;
+            padding: 4px;
+            background-color: var(--input-bg, #333);
+            color: var(--foreground, #cccccc);
+            border: none;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 13px;
+            resize: vertical;
+            box-sizing: border-box;
+        }
+        .preferences-item button {
+            padding: 4px 8px;
+            background-color: var(--button-bg, #007acc);
+            color: #ffffff;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 13px;
+        }
+        .preferences-item button:hover {
+            background-color: var(--button-hover-bg, #005f99);
+        }
+        .reset-btn {
+            background-color: #dc143c;
+            margin-left: 8px;
+        }
+        .reset-btn:hover {
+            background-color: #b31232;
+        }
+        .theme-customizer-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .theme-customizer-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .theme-customizer-item label {
+            flex: none;
+            font-size: 13px;
+        }
+        .theme-customizer-item input[type="color"] {
+            width: 100%;
+            height: 28px;
+            padding: 2px;
+            border: none;
+            border-radius: 3px;
             cursor: pointer;
         }
-        .terminal-menu div:hover {
-            background-color: #37373D;
+        .code-editor {
+            width: 100%;
+            background-color: var(--code-block-bg, #2a2a2a);
+            padding: 0px;
+            border-radius: 3px;
+            position: relative;
+            box-sizing: border-box;
+            border: none;
+        }
+        .code-editor pre, .code-editor code {
+            margin: 0;
+            font-family: monospace;
+            font-size: 13px;
+        }
+        .terminal-wallpaper-preview {
+            width: 100%;
+            height: 80px;
+            background-size: cover;
+            background-position: center;
+            border: none;
+            border-radius: 3px;
+            margin-top: 4px;
+        }
+        /* Override Editor Class */
+        .editor {
+            flex: none !important;
+        }
+        
+        input[type="color"] {
+           padding: 0px;
         }
     </style>
 </head>
@@ -85,16 +201,17 @@
             <div class="activity-bar">
                 <div class="icon explorer-icon active" data-panel="explorer"></div>
                 <div class="icon search-icon" data-panel="search"></div>
-                <div class="icon git-icon" data-panel="git"></div>
+                <div class="icon git-icon" data-panel="git"><span class="badge" id="git-changes-count">0</span></div>
                 <div class="icon debug-icon" data-panel="debug"></div>
                 <div class="icon extensions-icon" data-panel="extensions"></div>
-                <div class="icon settings-icon" data-panel="settings"></div>
             </div>
             <div id="explorer" class="sidebar-content">
                 <div class="explorer-header">
-                    <span>EXPLORER</span>
-                    <div class="refresh-icon" onclick="refreshFileTree()"></div>
-                    <div class="settings-icon" onclick="showExplorerMenu(event)"></div>
+                    <span id="explorer-title">kodoninja Workspace</span>
+                    <div>
+                        <div class="refresh-icon" onclick="refreshFileTree()"></div>
+                        <div class="settings-icon" onclick="showExplorerMenu(event)"></div>
+                    </div>
                 </div>
                 <ul id="file-tree"></ul>
             </div>
@@ -112,9 +229,18 @@
                     <span>SOURCE CONTROL</span>
                 </div>
                 <div class="git-panel">
-                    <div id="git-status"></div>
-                    <input type="text" id="git-commit-message" placeholder="Commit message..." />
-                    <button id="git-commit-btn">Commit</button>
+                    <textarea id="git-commit-message" placeholder="Commit message..."></textarea>
+                    <div class="git-actions">
+                        <button id="git-commit-btn">
+                            <svg viewBox="0 0 16 16" fill="#FFFFFF">
+                                <path d="M10.5 8a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0z"/>
+                                <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8zm8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7z"/>
+                            </svg>
+                            Commit
+                        </button>
+                        <div class="git-refresh-btn" onclick="refreshGitStatus()"></div>
+                    </div>
+                    <div class="git-changes-header">Changes</div>
                     <div id="git-changes"></div>
                 </div>
             </div>
@@ -140,32 +266,273 @@
                     <div id="extensions-list"></div>
                 </div>
             </div>
-            <div id="settings" class="sidebar-content" style="display: none;">
-                <div class="panel-header">
-                    <span>SETTINGS</span>
-                </div>
-                <div class="settings-panel">
-                    <label for="editor-theme">Editor Theme:</label>
-                    <select id="editor-theme">
-                        <option value="monokai">Monokai</option>
-                        <option value="dracula">Dracula</option>
-                        <option value="solarized-dark">Solarized Dark</option>
-                    </select>
-                </div>
-            </div>
             <div class="resize-handle"></div>
         </div>
         <div class="main">
             <div class="tabs" id="tabs">
-                <div class="tab active" data-file="INSTRUCTIONS.md">INSTRUCTIONS.md<div class="close-btn"></div></div>
+                <div class="tab active" data-file="./INSTRUCTIONS.md">INSTRUCTIONS.md<div class="close-btn"></div></div>
+                <div class="tab" data-tab="preferences-tab-content">
+                    <svg width="16" height="16" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0 8zm0 6a2 2 0 1 1 0-4 2 2 0 0 1 0 4zm7-7a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-2 4a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm2 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-7 2a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-6-2a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm2-6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-2-4a1 1 0 1 0 0-2 1 1 0 0 0 0 2z"/>
+                    </svg>
+                    <span>Preferences</span>
+                    <div class="close-btn"></div>
+                </div>
             </div>
             <div class="editor">
                 <div id="code-editor" style="display: none;"></div>
-                <div id="markdown-preview"></div>
+                <div id="markdown-preview">
+                    <div id="instructions-content">
+                        <!-- Content will be loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+            <div id="preferences-tab-content" style="display: none;">
+                <div class="preferences-section">
+                    <h2>Appearance</h2>
+                    <div class="preferences-section-content">
+                        <div class="preferences-item">
+                            <label for="theme-select">Select Theme<span class="tooltip">Choose a predefined theme</span></label>
+                            <select id="theme-select">
+                                <option value="nimbus-matte-black-1">Nimbus Matte Black</option>
+                                <option value="nimbus-dracula">Nimbus Dracula</option>
+                                <option value="nimbus-solarized-dark">Nimbus Solarized Dark</option>
+                                <option value="grok-light">Grok Light</option>
+                                <option value="grok-dark">Grok Dark</option>
+                                <option value="nimbus-ocean-breeze">Nimbus Ocean Breeze</option>
+                                <option value="nimbus-soft-sand">Nimbus Soft Sand</option>
+                                <option value="nimbus-ivory-dawn">Nimbus Ivory Dawn</option>
+                                <option value="ghibli-whisper">Ghibli Whisper</option>
+                                <option value="ghost-in-the-shell">Ghost in the Shell</option>
+                                <option value="ready-player-one">Ready Player One</option>
+                                <option value="akira">Akira</option>
+                                <option value="back-to-the-future">Back to the Future</option>
+                                <option value="blade-runner">Blade Runner</option>
+                                <option value="star-wars-sith">Star Wars Sith</option>
+                                <option value="star-wars-jedi">Star Wars Jedi</option>
+                                <option value="naruto">Naruto</option>
+                                <option value="solo-leveling">Solo Leveling</option>
+                                <option value="icp-internet-computer">ICP Internet Computer</option>
+                                <option value="death-note">Death Note</option>
+                            </select>
+                        </div>
+                        <div class="preferences-item">
+                            <label for="custom-theme-upload">Upload Custom Theme<span class="tooltip">Upload a CSS file to create a custom theme</span></label>
+                            <input type="file" id="custom-theme-upload" accept=".css" />
+                            <button id="upload-theme-btn">Upload</button>
+                        </div>
+                        <div class="preferences-item">
+                            <label>Theme Customizer<span class="tooltip">Customize colors for the UI</span></label>
+                        </div>
+                        <div class="theme-customizer-grid">
+                            <div class="theme-customizer-item">
+                                <label>Background</label>
+                                <input type="color" id="custom-background" value="#1e1e1e">
+                            </div>
+                            <div class="theme-customizer-item">
+                                <label>Foreground</label>
+                                <input type="color" id="custom-foreground" value="#cccccc">
+                            </div>
+                            <div class="theme-customizer-item">
+                                <label>Secondary Foreground</label>
+                                <input type="color" id="custom-secondary-foreground" value="#888888">
+                            </div>
+                            <div class="theme-customizer-item">
+                                <label>Accent Color</label>
+                                <input type="color" id="custom-accent-color" value="#007acc">
+                            </div>
+                            <div class="theme-customizer-item">
+                                <label>Highlight Color</label>
+                                <input type="color" id="custom-highlight-color" value="#ffd700">
+                            </div>
+                            <div class="theme-customizer-item">
+                                <label>Button Background</label>
+                                <input type="color" id="custom-button-bg" value="#007acc">
+                            </div>
+                            <div class="theme-customizer-item">
+                                <label>Button Hover</label>
+                                <input type="color" id="custom-button-hover-bg" value="#005f99">
+                            </div>
+                            <div class="theme-customizer-item">
+                                <label>Input Background</label>
+                                <input type="color" id="custom-input-bg" value="#333333">
+                            </div>
+                            <div class="theme-customizer-item">
+                                <label>Panel Background</label>
+                                <input type="color" id="custom-panel-bg" value="#252526">
+                            </div>
+                            <div class="theme-customizer-item">
+                                <label>Code Block Background</label>
+                                <input type="color" id="custom-code-block-bg" value="#2a2a2a">
+                            </div>
+                        </div>
+                        <div class="preferences-item">
+                            <label for="font-size">Font Size<span class="tooltip">Set the editor font size (e.g., 14px)</span></label>
+                            <input type="text" id="font-size" value="12px">
+                        </div>
+                        <div class="preferences-item">
+                            <label for="font-family">Font Family<span class="tooltip">Set the editor font family (e.g., monospace)</span></label>
+                            <input type="text" id="font-family" value="monospace">
+                        </div>
+                        <div class="preferences-item">
+                            <label for="line-height">Line Height<span class="tooltip">Set the line height (e.g., 1.5)</span></label>
+                            <input type="text" id="line-height" value="1.5">
+                        </div>
+                        <div class="preferences-item">
+                            <button class="reset-btn" onclick="resetAppearance()">Reset Appearance</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="preferences-section">
+                    <h2>Editor</h2>
+                    <div class="preferences-section-content">
+                        <div class="preferences-item">
+                            <label for="tab-size">Tab Size<span class="tooltip">Number of spaces per tab</span></label>
+                            <input type="text" id="tab-size" value="4">
+                        </div>
+                        <div class="preferences-item">
+                            <label for="word-wrap">Word Wrap<span class="tooltip">Wrap long lines in the editor</span></label>
+                            <input type="checkbox" id="word-wrap">
+                        </div>
+                        <div class="preferences-item">
+                            <label for="minimap">Minimap<span class="tooltip">Show a minimap of the code</span></label>
+                            <input type="checkbox" id="minimap">
+                        </div>
+                        <div class="preferences-item">
+                            <label for="line-numbers">Line Numbers<span class="tooltip">Show line numbers in the editor</span></label>
+                            <input type="checkbox" id="line-numbers" checked>
+                        </div>
+                        <div class="preferences-item">
+                            <label for="bracket-matching">Bracket Matching<span class="tooltip">Highlight matching brackets</span></label>
+                            <input type="checkbox" id="bracket-matching" checked>
+                        </div>
+                        <div class="preferences-item">
+                            <label for="auto-indent">Auto Indent<span class="tooltip">Automatically indent code</span></label>
+                            <input type="checkbox" id="auto-indent" checked>
+                        </div>
+                        <div class="preferences-item">
+                            <label for="custom-css">Custom Editor CSS<span class="tooltip">Apply custom CSS to the editor</span></label>
+                            <div class="code-editor">
+                                <pre><code class="language-css" id="custom-css-code"></code></pre>
+                                <textarea id="custom-css" placeholder="Enter custom CSS for the editor" style="display: none;"></textarea>
+                            </div>
+                        </div>
+                        <div class="preferences-item">
+                            <button class="reset-btn" onclick="resetEditor()">Reset Editor</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="preferences-section">
+                    <h2>Terminal</h2>
+                    <div class="preferences-section-content">
+                        <div class="preferences-item">
+                            <label for="terminal-font-size">Font Size<span class="tooltip">Set the terminal font size (e.g., 14px)</span></label>
+                            <input type="text" id="terminal-font-size" value="12px">
+                        </div>
+                        <div class="preferences-item">
+                            <label for="terminal-font-family">Font Family<span class="tooltip">Choose or add a custom font for the terminal</span></label>
+                            <select id="terminal-font-family">
+                                <option value="monospace">Monospace (Default)</option>
+                                <option value="Courier New, monospace">Courier New</option>
+                                <option value="Consolas, monospace">Consolas</option>
+                                <option value="Fira Code, monospace">Fira Code</option>
+                                <option value="Source Code Pro, monospace">Source Code Pro</option>
+                                <option value="JetBrains Mono, monospace">JetBrains Mono</option>
+                                <option value="Hack, monospace">Hack</option>
+                                <option value="Inconsolata, monospace">Inconsolata</option>
+                                <option value="Ubuntu Mono, monospace">Ubuntu Mono</option>
+                                <option value="custom">Custom (Add via URL)</option>
+                            </select>
+                        </div>
+                        <div class="preferences-item" id="custom-terminal-font-url-item" style="display: none;">
+                            <label for="terminal-font-url">Custom Font URL<span class="tooltip">Add a font via URL (e.g., from DaFont, Google Fonts)</span></label>
+                            <input type="url" id="terminal-font-url" placeholder="e.g., https://fonts.googleapis.com/css2?family=Roboto+Mono">
+                        </div>
+                        <div class="preferences-item">
+                            <label for="terminal-font-color">Font Color<span class="tooltip">Set the terminal text color</span></label>
+                            <input type="color" id="terminal-font-color" value="#cccccc">
+                        </div>
+                        <div class="preferences-item">
+                            <label for="terminal-cursor-style">Cursor Style<span class="tooltip">Choose the terminal cursor style</span></label>
+                            <select id="terminal-cursor-style">
+                                <option value="block">Block</option>
+                                <option value="underline">Underline</option>
+                                <option value="bar">Bar</option>
+                            </select>
+                        </div>
+                        <div class="preferences-item">
+                            <label for="terminal-cursor-color">Cursor Color<span class="tooltip">Set the terminal cursor color</span></label>
+                            <input type="color" id="terminal-cursor-color" value="#ffffff">
+                        </div>
+                        <div class="preferences-item">
+                            <label for="terminal-background-color">Background Color<span class="tooltip">Set the terminal background color</span></label>
+                            <input type="color" id="terminal-background-color" value="#1e1e1e">
+                        </div>
+                        <div class="preferences-item">
+                            <label for="terminal-wallpaper">Background Wallpaper<span class="tooltip">Upload a wallpaper for the terminal background</span></label>
+                            <input type="file" id="terminal-wallpaper" accept="image/*" />
+                            <div class="terminal-wallpaper-preview" id="terminal-wallpaper-preview" style="background-image: none;"></div>
+                        </div>
+                        <div class="preferences-item">
+                            <label for="terminal-wallpaper-url">Wallpaper URL<span class="tooltip">Add a wallpaper via URL</span></label>
+                            <input type="url" id="terminal-wallpaper-url" placeholder="e.g., https://example.com/wallpaper.jpg">
+                        </div>
+                        <div class="preferences-item">
+                            <label for="terminal-opacity">Background Opacity<span class="tooltip">Set the terminal background opacity (0 to 1)</span></label>
+                            <input type="text" id="terminal-opacity" value="1.0">
+                        </div>
+                        <div class="preferences-item">
+                            <div class="code-editor">
+                                <pre><code class="language-bash" id="terminal-custom-commands-code">
+                                        <label for="terminal-custom-commands">Custom Commands<span class="tooltip">Run commands on terminal start (e.g., alias ll='ls -la')</span></label>
+                                </code></pre>
+                                <textarea id="terminal-custom-commands" placeholder="Enter custom terminal commands"></textarea>
+                            </div>
+                        </div>
+                        <div class="preferences-item">
+                            <button class="reset-btn" onclick="resetTerminal()">Reset Terminal</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="preferences-section">
+                    <h2>Advanced Customization</h2>
+                    <div class="preferences-section-content">
+                        <div class="preferences-item">
+                            
+                            <div class="code-editor">
+                                <pre><code class="language-javascript" id="custom-js-code">
+                                        <label for="custom-js">Custom JavaScript<span class="tooltip">Run custom JS on load (be cautious)</span></label>
+                                </code></pre>
+                                <textarea id="custom-js" placeholder="Enter custom JavaScript to run on load"></textarea>
+                            </div>
+                        </div>
+                        <div class="preferences-item">
+                            <label for="enable-dev-tools">Enable Dev Tools<span class="tooltip">Show developer tools for debugging</span></label>
+                            <input type="checkbox" id="enable-dev-tools">
+                        </div>
+                        <div class="preferences-item">
+                            <div class="code-editor">
+                                <pre><code class="language-json" id="custom-keybindings-code">
+                                        <label for="custom-keybindings">Custom Keybindings (JSON)<span class="tooltip">Define custom keybindings (e.g., {\"key\": \"ctrl+alt+t\", \"command\": \"openNewTerminal\"})</span></label>
+                                </code></pre>
+                                <textarea id="custom-keybindings" placeholder='{"key": "ctrl+alt+t", "command": "openNewTerminal"}'></textarea>
+                            </div>
+                        </div>
+                        <div class="preferences-item">
+                            <label>Save/Load Profile<span class="tooltip">Save or load your customization profile</span></label>
+                            <button onclick="saveProfile()">Save Profile</button>
+                            <input type="file" id="load-profile" accept=".json" style="margin-left: 8px;" />
+                            <button onclick="document.getElementById('load-profile').click()">Load Profile</button>
+                        </div>
+                        <div class="preferences-item">
+                            <button class="reset-btn" onclick="resetAdvanced()">Reset Advanced</button>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="terminal-panel" style="display: none; height: 0;">
                 <div class="terminal-header">
-                    <span>TERMINAL</span>
+                    <span>kodoninja</span>
                     <div class="terminal-controls">
                         <div class="terminal-menu-icon" onclick="showTerminalMenu(event)"></div>
                     </div>
@@ -207,6 +574,8 @@
     </div>
     <div class="status-bar">
         <div class="status-left">
+            <div class="status-menu-icon" onclick="showStatusMenu(event)"></div>
+            <span>Nimbuspad++ on AviyonOS-Lite v1.001</span>
             <span id="file-status"></span>
             <span id="cursor-position">Ln 1, Col 1</span>
             <span id="indentation">Spaces: 4</span>
@@ -216,11 +585,12 @@
             <span id="language-label">Markdown</span>
             <span id="tab-label" onclick="openInstructions()">Instructions</span>
             <a href="#" class="terminal-link" onclick="toggleTerminal()">Terminal</a>
+            <span id="preferences-label" onclick="togglePreferences()">Preferences</span>
             <span id="nimbus-label" onclick="toggleNimbusPanel()">Nimbus.ai</span>
             <span id="formatter">Prettier</span>
         </div>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.0.12/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm/5.1.0/xterm.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xterm-addon-fit/0.7.0/xterm-addon-fit.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
@@ -233,5 +603,625 @@
     <script src="scripts/debug.js"></script>
     <script src="scripts/extensions.js"></script>
     <script src="scripts/nimbus.js"></script>
+    <script src="scripts/menu.js"></script>
+    <script src="scripts/sidebar.js"></script>
+    <script>
+        // User profile to store custom themes and settings
+        const userProfile = {
+            username: 'kodoninja',
+            customThemes: [],
+            customFonts: [],
+            settings: {}
+        };
+
+        // Default settings for reset
+        const defaultSettings = {
+            appearance: {
+                theme: 'nimbus-matte-black-1',
+                fontSize: '12px',
+                fontFamily: 'monospace',
+                lineHeight: '1.5',
+                customBackground: '#1e1e1e',
+                customForeground: '#cccccc',
+                customSecondaryForeground: '#888888',
+                customAccentColor: '#007acc',
+                customHighlightColor: '#ffd700',
+                customButtonBg: '#007acc',
+                customButtonHoverBg: '#005f99',
+                customInputBg: '#333333',
+                customPanelBg: '#252526',
+                customCodeBlockBg: '#2a2a2a'
+            },
+            editor: {
+                tabSize: '4',
+                wordWrap: false,
+                minimap: false,
+                lineNumbers: true,
+                bracketMatching: true,
+                autoIndent: true,
+                customCSS: ''
+            },
+            terminal: {
+                fontSize: '12px',
+                fontFamily: 'monospace',
+                fontColor: '#cccccc',
+                cursorStyle: 'block',
+                cursorColor: '#ffffff',
+                backgroundColor: '#1e1e1e',
+                wallpaper: '',
+                wallpaperUrl: '',
+                opacity: '1.0',
+                customCommands: ''
+            },
+            advanced: {
+                customJS: '',
+                enableDevTools: false,
+                customKeybindings: '{"key": "ctrl+alt+t", "command": "openNewTerminal"}'
+            }
+        };
+
+        // Sanitize CSS to prevent malicious code
+        function sanitizeCSS(css) {
+            css = css.replace(/url\(/gi, '');
+            css = css.replace(/@import/gi, '');
+            css = css.replace(/expression\(/gi, '');
+            css = css.replace(/javascript:/gi, '');
+            css = css.replace(/<script/gi, '');
+            css = css.replace(/on[a-z]+\s*=/gi, '');
+            return css;
+        }
+
+        // Apply settings to the editor and terminal
+        function applySettings() {
+            const fontSize = document.getElementById('font-size').value;
+            const fontFamily = document.getElementById('font-family').value;
+            const lineHeight = document.getElementById('line-height').value;
+            const tabSize = document.getElementById('tab-size').value;
+            const wordWrap = document.getElementById('word-wrap').checked;
+            const minimap = document.getElementById('minimap').checked;
+            const lineNumbers = document.getElementById('line-numbers').checked;
+            const bracketMatching = document.getElementById('bracket-matching').checked;
+            const autoIndent = document.getElementById('auto-indent').checked;
+            const customCSS = document.getElementById('custom-css').value;
+            const terminalFontSize = document.getElementById('terminal-font-size').value;
+            const terminalFontFamily = document.getElementById('terminal-font-family').value;
+            const terminalFontColor = document.getElementById('terminal-font-color').value;
+            const terminalCursorStyle = document.getElementById('terminal-cursor-style').value;
+            const terminalCursorColor = document.getElementById('terminal-cursor-color').value;
+            const terminalBackgroundColor = document.getElementById('terminal-background-color').value;
+            const terminalWallpaper = document.getElementById('terminal-wallpaper').files[0];
+            const terminalWallpaperUrl = document.getElementById('terminal-wallpaper-url').value;
+            const terminalOpacity = document.getElementById('terminal-opacity').value;
+            const terminalCustomCommands = document.getElementById('terminal-custom-commands').value;
+            const customJS = document.getElementById('custom-js').value;
+            const enableDevTools = document.getElementById('enable-dev-tools').checked;
+            const customKeybindings = document.getElementById('custom-keybindings').value;
+
+            // Apply editor settings
+            document.querySelector('.editor').style.fontSize = fontSize;
+            document.querySelector('.editor').style.fontFamily = fontFamily;
+            document.querySelector('.editor').style.lineHeight = lineHeight;
+            document.getElementById('indentation').textContent = `Spaces: ${tabSize}`;
+            document.querySelector('.editor').style.whiteSpace = wordWrap ? 'pre-wrap' : 'pre';
+            document.querySelector('.editor').style.overflowX = wordWrap ? 'hidden' : 'auto';
+
+            // Simulate minimap, line numbers, bracket matching, auto-indent
+            if (!minimap) console.log('Minimap disabled');
+            if (!lineNumbers) console.log('Line numbers disabled');
+            if (!bracketMatching) console.log('Bracket matching disabled');
+            if (!autoIndent) console.log('Auto indent disabled');
+
+            // Apply custom CSS
+            if (customCSS) {
+                const sanitizedCSS = sanitizeCSS(customCSS);
+                const style = document.createElement('style');
+                style.textContent = sanitizedCSS;
+                document.head.appendChild(style);
+            }
+
+            // Apply terminal settings
+            const terminalPanel = document.querySelector('.terminal-panel');
+            const terminalContent = document.querySelector('.terminal-content');
+            terminalContent.style.fontSize = terminalFontSize;
+            terminalContent.style.color = terminalFontColor;
+            terminalContent.style.opacity = terminalOpacity;
+
+            if (terminalFontFamily !== 'custom') {
+                terminalContent.style.fontFamily = terminalFontFamily;
+            }
+
+            const terminal = terminals[activeTerminalId]?.terminal;
+            if (terminal) {
+                terminal.setOption('cursorStyle', terminalCursorStyle);
+                terminal.setOption('cursorColor', terminalCursorColor);
+                terminal.setOption('background', terminalBackgroundColor);
+            }
+
+            // Apply terminal background
+            if (terminalWallpaper) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    terminalContent.style.backgroundImage = `url(${e.target.result})`;
+                    terminalContent.style.backgroundSize = 'cover';
+                    terminalContent.style.backgroundPosition = 'center';
+                    document.getElementById('terminal-wallpaper-preview').style.backgroundImage = `url(${e.target.result})`;
+                };
+                reader.readAsDataURL(terminalWallpaper);
+            } else if (terminalWallpaperUrl) {
+                terminalContent.style.backgroundImage = `url(${terminalWallpaperUrl})`;
+                terminalContent.style.backgroundSize = 'cover';
+                terminalContent.style.backgroundPosition = 'center';
+                document.getElementById('terminal-wallpaper-preview').style.backgroundImage = `url(${terminalWallpaperUrl})`;
+            } else {
+                terminalContent.style.backgroundImage = 'none';
+                terminalContent.style.backgroundColor = terminalBackgroundColor;
+                document.getElementById('terminal-wallpaper-preview').style.backgroundImage = 'none';
+            }
+
+            if (terminalCustomCommands) {
+                console.log('Custom terminal commands:', terminalCustomCommands);
+                const ws = terminals[activeTerminalId]?.ws;
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(terminalCustomCommands + '\n');
+                }
+            }
+
+            // Apply custom JS (safely)
+            if (customJS) {
+                try {
+                    const safeFunction = new Function(customJS);
+                    safeFunction();
+                } catch (e) {
+                    console.error('Error in custom JS:', e);
+                }
+            }
+
+            // Enable dev tools
+            if (enableDevTools) {
+                console.log('Dev tools enabled');
+                if (window.devTools) window.devTools.show();
+            }
+
+            // Apply custom keybindings
+            if (customKeybindings) {
+                try {
+                    const bindings = JSON.parse(customKeybindings);
+                    document.removeEventListener('keydown', handleCustomKeybindings);
+                    document.addEventListener('keydown', handleCustomKeybindings);
+                    window.customKeybindings = bindings;
+                } catch (e) {
+                    console.error('Error in custom keybindings:', e);
+                }
+            }
+
+            // Apply theme customizations
+            const root = document.documentElement;
+            root.style.setProperty('--background', document.getElementById('custom-background').value);
+            root.style.setProperty('--foreground', document.getElementById('custom-foreground').value);
+            root.style.setProperty('--secondary-foreground', document.getElementById('custom-secondary-foreground').value);
+            root.style.setProperty('--accent-color', document.getElementById('custom-accent-color').value);
+            root.style.setProperty('--highlight-color', document.getElementById('custom-highlight-color').value);
+            root.style.setProperty('--button-bg', document.getElementById('custom-button-bg').value);
+            root.style.setProperty('--button-hover-bg', document.getElementById('custom-button-hover-bg').value);
+            root.style.setProperty('--input-bg', document.getElementById('custom-input-bg').value);
+            root.style.setProperty('--panel-bg', document.getElementById('custom-panel-bg').value);
+            root.style.setProperty('--code-block-bg', document.getElementById('custom-code-block-bg').value);
+
+            // Save settings to user profile
+            userProfile.settings = {
+                fontSize,
+                fontFamily,
+                lineHeight,
+                tabSize,
+                wordWrap,
+                minimap,
+                lineNumbers,
+                bracketMatching,
+                autoIndent,
+                customCSS,
+                terminalFontSize,
+                terminalFontFamily: terminalFontFamily === 'custom' ? document.getElementById('terminal-font-url').value : terminalFontFamily,
+                terminalFontColor,
+                terminalCursorStyle,
+                terminalCursorColor,
+                terminalBackgroundColor,
+                terminalWallpaper: terminalWallpaper ? terminalWallpaper.name : '',
+                terminalWallpaperUrl,
+                terminalOpacity,
+                terminalCustomCommands,
+                customJS,
+                enableDevTools,
+                customKeybindings,
+                themeCustomizations: {
+                    background: document.getElementById('custom-background').value,
+                    foreground: document.getElementById('custom-foreground').value,
+                    secondaryForeground: document.getElementById('custom-secondary-foreground').value,
+                    accentColor: document.getElementById('custom-accent-color').value,
+                    highlightColor: document.getElementById('custom-highlight-color').value,
+                    buttonBg: document.getElementById('custom-button-bg').value,
+                    buttonHoverBg: document.getElementById('custom-button-hover-bg').value,
+                    inputBg: document.getElementById('custom-input-bg').value,
+                    panelBg: document.getElementById('custom-panel-bg').value,
+                    codeBlockBg: document.getElementById('custom-code-block-bg').value
+                }
+            };
+        }
+
+        // Reset functions for each section
+        function resetAppearance() {
+            const settings = defaultSettings.appearance;
+            document.getElementById('theme-select').value = settings.theme;
+            document.getElementById('font-size').value = settings.fontSize;
+            document.getElementById('font-family').value = settings.fontFamily;
+            document.getElementById('line-height').value = settings.lineHeight;
+            document.getElementById('custom-background').value = settings.customBackground;
+            document.getElementById('custom-foreground').value = settings.customForeground;
+            document.getElementById('custom-secondary-foreground').value = settings.customSecondaryForeground;
+            document.getElementById('custom-accent-color').value = settings.customAccentColor;
+            document.getElementById('custom-highlight-color').value = settings.customHighlightColor;
+            document.getElementById('custom-button-bg').value = settings.customButtonBg;
+            document.getElementById('custom-button-hover-bg').value = settings.customButtonHoverBg;
+            document.getElementById('custom-input-bg').value = settings.customInputBg;
+            document.getElementById('custom-panel-bg').value = settings.customPanelBg;
+            document.getElementById('custom-code-block-bg').value = settings.customCodeBlockBg;
+            applySettings();
+            const themeStylesheet = document.getElementById('theme-stylesheet');
+            themeStylesheet.href = `np++_themes/${settings.theme}.css`;
+        }
+
+        function resetEditor() {
+            const settings = defaultSettings.editor;
+            document.getElementById('tab-size').value = settings.tabSize;
+            document.getElementById('word-wrap').checked = settings.wordWrap;
+            document.getElementById('minimap').checked = settings.minimap;
+            document.getElementById('line-numbers').checked = settings.lineNumbers;
+            document.getElementById('bracket-matching').checked = settings.bracketMatching;
+            document.getElementById('auto-indent').checked = settings.autoIndent;
+            document.getElementById('custom-css').value = settings.customCSS;
+            updateCodeEditor('custom-css', 'language-css');
+            applySettings();
+        }
+
+        function resetTerminal() {
+            const settings = defaultSettings.terminal;
+            document.getElementById('terminal-font-size').value = settings.fontSize;
+            document.getElementById('terminal-font-family').value = settings.fontFamily;
+            document.getElementById('terminal-font-color').value = settings.fontColor;
+            document.getElementById('terminal-cursor-style').value = settings.cursorStyle;
+            document.getElementById('terminal-cursor-color').value = settings.cursorColor;
+            document.getElementById('terminal-background-color').value = settings.backgroundColor;
+            document.getElementById('terminal-wallpaper').value = '';
+            document.getElementById('terminal-wallpaper-url').value = settings.wallpaperUrl;
+            document.getElementById('terminal-opacity').value = settings.opacity;
+            document.getElementById('terminal-custom-commands').value = settings.customCommands;
+            document.getElementById('terminal-wallpaper-preview').style.backgroundImage = 'none';
+            document.getElementById('custom-terminal-font-url-item').style.display = 'none';
+            updateCodeEditor('terminal-custom-commands', 'language-bash');
+            applySettings();
+        }
+
+        function resetAdvanced() {
+            const settings = defaultSettings.advanced;
+            document.getElementById('custom-js').value = settings.customJS;
+            document.getElementById('enable-dev-tools').checked = settings.enableDevTools;
+            document.getElementById('custom-keybindings').value = settings.customKeybindings;
+            updateCodeEditor('custom-js', 'language-javascript');
+            updateCodeEditor('custom-keybindings', 'language-json');
+            applySettings();
+        }
+
+        // Save and load profile
+        function saveProfile() {
+            const profile = {
+                settings: userProfile.settings,
+                customThemes: userProfile.customThemes,
+                customFonts: userProfile.customFonts
+            };
+            const blob = new Blob([JSON.stringify(profile, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nimbuspad-profile-${userProfile.username}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function loadProfile() {
+            const fileInput = document.getElementById('load-profile');
+            const file = fileInput.files[0];
+            if (file && file.type === 'application/json') {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    try {
+                        const profile = JSON.parse(e.target.result);
+                        userProfile.settings = profile.settings || {};
+                        userProfile.customThemes = profile.customThemes || [];
+                        userProfile.customFonts = profile.customFonts || [];
+
+                        // Apply loaded settings
+                        document.getElementById('theme-select').value = userProfile.settings.theme || defaultSettings.appearance.theme;
+                        document.getElementById('font-size').value = userProfile.settings.fontSize || defaultSettings.appearance.fontSize;
+                        document.getElementById('font-family').value = userProfile.settings.fontFamily || defaultSettings.appearance.fontFamily;
+                        document.getElementById('line-height').value = userProfile.settings.lineHeight || defaultSettings.appearance.lineHeight;
+                        document.getElementById('custom-background').value = userProfile.settings.themeCustomizations?.background || defaultSettings.appearance.customBackground;
+                        document.getElementById('custom-foreground').value = userProfile.settings.themeCustomizations?.foreground || defaultSettings.appearance.customForeground;
+                        document.getElementById('custom-secondary-foreground').value = userProfile.settings.themeCustomizations?.secondaryForeground || defaultSettings.appearance.customSecondaryForeground;
+                        document.getElementById('custom-accent-color').value = userProfile.settings.themeCustomizations?.accentColor || defaultSettings.appearance.customAccentColor;
+                        document.getElementById('custom-highlight-color').value = userProfile.settings.themeCustomizations?.highlightColor || defaultSettings.appearance.customHighlightColor;
+                        document.getElementById('custom-button-bg').value = userProfile.settings.themeCustomizations?.buttonBg || defaultSettings.appearance.customButtonBg;
+                        document.getElementById('custom-button-hover-bg').value = userProfile.settings.themeCustomizations?.buttonHoverBg || defaultSettings.appearance.customButtonHoverBg;
+                        document.getElementById('custom-input-bg').value = userProfile.settings.themeCustomizations?.inputBg || defaultSettings.appearance.customInputBg;
+                        document.getElementById('custom-panel-bg').value = userProfile.settings.themeCustomizations?.panelBg || defaultSettings.appearance.customPanelBg;
+                        document.getElementById('custom-code-block-bg').value = userProfile.settings.themeCustomizations?.codeBlockBg || defaultSettings.appearance.customCodeBlockBg;
+                        document.getElementById('tab-size').value = userProfile.settings.tabSize || defaultSettings.editor.tabSize;
+                        document.getElementById('word-wrap').checked = userProfile.settings.wordWrap || defaultSettings.editor.wordWrap;
+                        document.getElementById('minimap').checked = userProfile.settings.minimap || defaultSettings.editor.minimap;
+                        document.getElementById('line-numbers').checked = userProfile.settings.lineNumbers || defaultSettings.editor.lineNumbers;
+                        document.getElementById('bracket-matching').checked = userProfile.settings.bracketMatching || defaultSettings.editor.bracketMatching;
+                        document.getElementById('auto-indent').checked = userProfile.settings.autoIndent || defaultSettings.editor.autoIndent;
+                        document.getElementById('custom-css').value = userProfile.settings.customCSS || defaultSettings.editor.customCSS;
+                        document.getElementById('terminal-font-size').value = userProfile.settings.terminalFontSize || defaultSettings.terminal.fontSize;
+                        document.getElementById('terminal-font-family').value = userProfile.settings.terminalFontFamily?.includes('http') ? 'custom' : userProfile.settings.terminalFontFamily || defaultSettings.terminal.fontFamily;
+                        document.getElementById('terminal-font-url').value = userProfile.settings.terminalFontFamily?.includes('http') ? userProfile.settings.terminalFontFamily : '';
+                        document.getElementById('terminal-font-color').value = userProfile.settings.terminalFontColor || defaultSettings.terminal.fontColor;
+                        document.getElementById('terminal-cursor-style').value = userProfile.settings.terminalCursorStyle || defaultSettings.terminal.cursorStyle;
+                        document.getElementById('terminal-cursor-color').value = userProfile.settings.terminalCursorColor || defaultSettings.terminal.cursorColor;
+                        document.getElementById('terminal-background-color').value = userProfile.settings.terminalBackgroundColor || defaultSettings.terminal.backgroundColor;
+                        document.getElementById('terminal-wallpaper-url').value = userProfile.settings.terminalWallpaperUrl || defaultSettings.terminal.wallpaperUrl;
+                        document.getElementById('terminal-opacity').value = userProfile.settings.terminalOpacity || defaultSettings.terminal.opacity;
+                        document.getElementById('terminal-custom-commands').value = userProfile.settings.terminalCustomCommands || defaultSettings.terminal.customCommands;
+                        document.getElementById('custom-js').value = userProfile.settings.customJS || defaultSettings.advanced.customJS;
+                        document.getElementById('enable-dev-tools').checked = userProfile.settings.enableDevTools || defaultSettings.advanced.enableDevTools;
+                        document.getElementById('custom-keybindings').value = userProfile.settings.customKeybindings || defaultSettings.advanced.customKeybindings;
+
+                        // Update code editors
+                        updateCodeEditor('custom-css', 'language-css');
+                        updateCodeEditor('terminal-custom-commands', 'language-bash');
+                        updateCodeEditor('custom-js', 'language-javascript');
+                        updateCodeEditor('custom-keybindings', 'language-json');
+
+                        // Apply custom fonts
+                        userProfile.customFonts.forEach(font => {
+                            const link = document.createElement('link');
+                            link.rel = 'stylesheet';
+                            link.href = font.url;
+                            document.head.appendChild(link);
+                        });
+
+                        // Apply custom themes to theme select
+                        userProfile.customThemes.forEach(theme => {
+                            const option = document.createElement('option');
+                            option.value = theme.name;
+                            option.textContent = `Custom: ${theme.name}`;
+                            document.getElementById('theme-select').appendChild(option);
+                        });
+
+                        // Show custom font URL input if applicable
+                        document.getElementById('custom-terminal-font-url-item').style.display = userProfile.settings.terminalFontFamily?.includes('http') ? 'flex' : 'none';
+
+                        applySettings();
+                    } catch (e) {
+                        console.error('Error loading profile:', e);
+                        alert('Failed to load profile. Please ensure the file is a valid JSON.');
+                    }
+                };
+                reader.readAsText(file);
+            } else {
+                alert('Please upload a valid JSON file.');
+            }
+        }
+
+        // Update code editors with syntax highlighting
+        function updateCodeEditor(textareaId, languageClass) {
+            const textarea = document.getElementById(textareaId);
+            const codeElement = document.getElementById(`${textareaId}-code`);
+            codeElement.textContent = textarea.value;
+            hljs.highlightElement(codeElement);
+        }
+
+        // Handle custom keybindings
+        function handleCustomKeybindings(e) {
+            const bindings = window.customKeybindings;
+            if (!bindings) return;
+
+            const keyCombo = [];
+            if (e.ctrlKey) keyCombo.push('ctrl');
+            if (e.altKey) keyCombo.push('alt');
+            if (e.shiftKey) keyCombo.push('shift');
+            keyCombo.push(e.key.toLowerCase());
+            const keyString = keyCombo.join('+');
+
+            if (bindings.key === keyString) {
+                e.preventDefault();
+                if (bindings.command === 'openNewTerminal') {
+                    createNewTerminal();
+                }
+            }
+        }
+
+        // Fetch INSTRUCTIONS.md dynamically
+        function loadInstructions() {
+            fetch('./INSTRUCTIONS.md')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Failed to load INSTRUCTIONS.md');
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    const instructionsContent = document.getElementById('instructions-content');
+                    instructionsContent.innerHTML = marked.parse(data);
+                    hljs.highlightAll();
+                })
+                .catch(error => {
+                    console.error('Error loading INSTRUCTIONS.md:', error);
+                    const instructionsContent = document.getElementById('instructions-content');
+                    instructionsContent.innerHTML = '<p style="color: red;">Error: Could not load INSTRUCTIONS.md. Please check the file in repos/INSTRUCTIONS.md.</p>';
+                });
+        }
+
+        // Toggle Preferences tab
+        function togglePreferences() {
+            const preferencesTab = document.querySelector('.tab[data-tab="preferences-tab-content"]');
+            const isActive = preferencesTab.classList.contains('active');
+            
+            // If the tab is already active, do nothing (or optionally close it by switching to another tab)
+            if (isActive) {
+                return;
+            }
+
+            // Otherwise, switch to the Preferences tab
+            openPreferences();
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadInstructions();
+
+            // Collapsible sections
+            document.querySelectorAll('.preferences-section h2').forEach(header => {
+                header.addEventListener('click', () => {
+                    const section = header.parentElement;
+                    section.classList.toggle('collapsed');
+                });
+            });
+
+            // Initialize code editors
+            updateCodeEditor('custom-css', 'language-css');
+            updateCodeEditor('terminal-custom-commands', 'language-bash');
+            updateCodeEditor('custom-js', 'language-javascript');
+            updateCodeEditor('custom-keybindings', 'language-json');
+
+            const themeSelect = document.getElementById('theme-select');
+            themeSelect.addEventListener('change', (e) => {
+                const themeStylesheet = document.getElementById('theme-stylesheet');
+                themeStylesheet.href = `np++_themes/${e.target.value}.css`;
+            });
+
+            // Handle custom theme upload
+            const uploadThemeBtn = document.getElementById('upload-theme-btn');
+            uploadThemeBtn.addEventListener('click', () => {
+                const fileInput = document.getElementById('custom-theme-upload');
+                const file = fileInput.files[0];
+                if (file && file.type === 'text/css') {
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        const cssContent = sanitizeCSS(e.target.result);
+                        const themeName = `custom-${userProfile.username}-${Date.now()}`;
+                        userProfile.customThemes.push({ name: themeName, css: cssContent });
+
+                        const option = document.createElement('option');
+                        option.value = themeName;
+                        option.textContent = `Custom: ${themeName}`;
+                        themeSelect.appendChild(option);
+
+                        const blob = new Blob([cssContent], { type: 'text/css' });
+                        const url = URL.createObjectURL(blob);
+                        document.getElementById('theme-stylesheet').href = url;
+
+                        console.log('Theme saved to user profile:', userProfile);
+                    };
+                    reader.readAsText(file);
+                } else {
+                    alert('Please upload a valid CSS file.');
+                }
+            });
+
+            // Handle terminal font selection
+            const terminalFontSelect = document.getElementById('terminal-font-family');
+            terminalFontSelect.addEventListener('change', (e) => {
+                const customFontUrlItem = document.getElementById('custom-terminal-font-url-item');
+                if (e.target.value === 'custom') {
+                    customFontUrlItem.style.display = 'flex';
+                } else {
+                    customFontUrlItem.style.display = 'none';
+                    applySettings();
+                }
+            });
+
+            // Handle custom font URL
+            document.getElementById('terminal-font-url').addEventListener('change', (e) => {
+                const fontUrl = e.target.value;
+                if (fontUrl) {
+                    const link = document.createElement('link');
+                    link.rel = 'stylesheet';
+                    link.href = fontUrl;
+                    document.head.appendChild(link);
+
+                    userProfile.customFonts.push({ url: fontUrl });
+                    document.querySelector('.terminal-content').style.fontFamily = 'monospace'; // Fallback
+                    applySettings();
+                }
+            });
+
+            // Handle wallpaper URL change
+            document.getElementById('terminal-wallpaper-url').addEventListener('change', applySettings);
+
+            // Handle profile load
+            document.getElementById('load-profile').addEventListener('change', loadProfile);
+
+            // Apply settings on change
+            document.querySelectorAll('#preferences-tab-content input, #preferences-tab-content select, #preferences-tab-content textarea').forEach(element => {
+                element.addEventListener('input', () => {
+                    if (element.tagName === 'TEXTAREA') {
+                        updateCodeEditor(element.id, element.id.includes('css') ? 'language-css' : element.id.includes('js') ? 'language-javascript' : element.id.includes('keybindings') ? 'language-json' : 'language-bash');
+                    }
+                    applySettings();
+                });
+            });
+
+            // Tab navigation
+            const tabs = document.querySelectorAll('.tab');
+            const tabContents = document.querySelectorAll('.editor > div, #preferences-tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    // Prevent click events from being consumed by child elements
+                    if (e.target.classList.contains('close-btn')) return;
+
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(content => content.style.display = 'none');
+                    
+                    tab.classList.add('active');
+                    const targetId = tab.dataset.tab || (tab.dataset.file ? 'markdown-preview' : null);
+                    if (targetId) {
+                        const targetContent = document.getElementById(targetId);
+                        if (targetContent) {
+                            targetContent.style.display = 'block';
+                        }
+                    }
+                });
+
+                const closeBtn = tab.querySelector('.close-btn');
+                if (closeBtn) {
+                    closeBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const activeTab = document.querySelector('.tab.active');
+                        const nextTab = tab.nextElementSibling || tab.previousElementSibling;
+                        
+                        if (tab === activeTab && nextTab) {
+                            nextTab.click();
+                        }
+                        tab.remove();
+                    });
+                }
+            });
+
+            // Ensure Instructions tab content is not altered
+            window.openInstructions = function() {
+                const instructionsTab = document.querySelector('.tab[data-file="INSTRUCTIONS.md"]');
+                if (instructionsTab) {
+                    instructionsTab.click();
+                }
+            };
+
+            // Open Preferences tab
+            window.openPreferences = function() {
+                const preferencesTab = document.querySelector('.tab[data-tab="preferences-tab-content"]');
+                if (preferencesTab) {
+                    preferencesTab.click();
+                }
+            };
+        });
+    </script>
 </body>
 </html>

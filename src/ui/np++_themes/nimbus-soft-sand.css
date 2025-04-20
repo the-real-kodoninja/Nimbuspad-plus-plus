@@ -1,0 +1,227 @@
+:root {
+    --background: #FDF6E3;
+    --foreground: #4A3728;
+    --secondary-foreground: #8D7A5C;
+    --accent-color: #CB7755;
+    --highlight-color: #D4A017;
+    --border-color: #EDE4D3;
+    --hover-bg: #EDE4D3;
+    --button-bg: #CB7755;
+    --button-hover-bg: #B7694B;
+    --input-bg: #FFFFFF;
+    --panel-bg: #FFFFFF;
+    --panel-header-bg: #F9F2DF;
+    --tab-bg: #F9F2DF;
+    --tab-active-bg: #FDF6E3;
+    --message-bg: #EDE4D3;
+    --user-message-bg: #CB7755;
+    --code-block-bg: #FDF6E3;
+    --modified-status: #EBCB8B;
+    --added-status: #A3BE8C;
+    --deleted-status: #BF616A;
+}
+
+body {
+    background-color: var(--background);
+    color: var(--foreground);
+}
+
+.activity-bar {
+    background-color: #EDE4D3;
+}
+
+.activity-bar .icon:hover, .activity-bar .icon.active {
+    border-left: 2px solid var(--accent-color);
+}
+
+.git-icon .badge {
+    background-color: var(--accent-color);
+    color: #FFFFFF;
+    border: 1px solid var(--panel-bg);
+}
+
+.sidebar-content {
+    background-color: var(--panel-bg);
+}
+
+.panel-header, .explorer-header {
+    color: var(--foreground);
+    background-color: var(--panel-header-bg);
+}
+
+.explorer-menu.context-menu {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    color: var(--foreground);
+}
+
+.git-panel {
+    color: var(--foreground);
+}
+
+#git-commit-message, #search-input, #extensions-search, #debug-config {
+    background-color: var(--input-bg);
+    color: var(--foreground);
+}
+
+#git-changes .git-change-status.modified {
+    color: var(--modified-status);
+}
+
+#git-changes .git-change-status.added {
+    color: var(--added-status);
+}
+
+#git-changes .git-change-status.deleted {
+    color: var(--deleted-status);
+}
+
+#git-commit-btn, #debug-start-btn {
+    background-color: var(--button-bg);
+    color: #FFFFFF;
+}
+
+#git-commit-btn:hover, #debug-start-btn:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.nimbus-sidebar {
+    background-color: var(--panel-bg);
+}
+
+.nimbus-resize-handle {
+    background-color: var(--panel-header-bg);
+}
+
+#code-editor, .editor {
+    background-color: var(--background);
+    color: var(--foreground);
+}
+
+#markdown-preview {
+    color: var(--foreground);
+}
+
+#markdown-preview h1, #markdown-preview h2, #markdown-preview h3 {
+    color: #4A3728;
+}
+
+#markdown-preview code {
+    background-color: var(--panel-header-bg);
+}
+
+#nimbus-tab-content {
+    background-color: var(--panel-bg);
+}
+
+.terminal-panel {
+    background: var(--background);
+}
+
+.terminal-header {
+    background: var(--panel-bg);
+    color: var(--foreground);
+}
+
+.terminal-content {
+    background: var(--background);
+}
+
+.terminal-link {
+    color: var(--secondary-foreground);
+}
+
+.status-bar {
+    background-color: var(--panel-bg);
+    color: var(--secondary-foreground);
+}
+
+.status-menu, .theme-selector {
+    background-color: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    color: var(--foreground);
+}
+
+.theme-selector select {
+    background-color: var(--input-bg);
+    color: var(--foreground);
+}
+
+.tabs {
+    background-color: var(--background);
+}
+
+.tab {
+    color: var(--foreground);
+    background-color: var(--tab-bg);
+}
+
+.tab.active {
+    background-color: var(--tab-active-bg);
+    color: #4A3728;
+}
+
+.tab-nimbus {
+    background-color: var(--panel-bg);
+}
+
+.tab-nimbus.active {
+    background-color: var(--tab-active-bg);
+}
+
+.nimbus-header {
+    color: var(--foreground);
+    background-color: var(--panel-header-bg);
+}
+
+.nimbus-content {
+    color: var(--foreground);
+}
+
+.nimbus-input-area {
+    background-color: var(--panel-header-bg);
+}
+
+#nimbus-input {
+    background-color: var(--input-bg);
+    color: var(--foreground);
+}
+
+#nimbus-send-btn {
+    background-color: var(--button-bg);
+    color: #FFFFFF;
+}
+
+#nimbus-send-btn:hover {
+    background-color: var(--button-hover-bg);
+}
+
+.nimbus-message {
+    background-color: var(--message-bg);
+    color: var(--foreground);
+}
+
+.user-message {
+    background-color: var(--user-message-bg);
+    color: #FFFFFF;
+}
+
+.code-block {
+    background-color: var(--code-block-bg);
+}
+
+.apply-btn, .copy-btn, .wrap-btn {
+    background-color: var(--highlight-color);
+    color: #FFFFFF;
+}
+
+.apply-btn:hover, .copy-btn:hover, .wrap-btn:hover {
+    background-color: #C19015;
+}
+
+.preferences-item select,
+.preferences-item input[type="checkbox"],
+.preferences-item input[type="text"] {
+    background-color: var(--input-bg);
+    color: var(--foreground);
+}

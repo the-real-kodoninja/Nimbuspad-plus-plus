@@ -1,0 +1,241 @@
+<div id="preferences-content" class="preferences-section">
+    <h2>Appearance</h2>
+    <div class="preferences-section-content">
+        <div class="preferences-item">
+            <label for="theme-select">Select Theme<span class="tooltip">Choose a predefined theme</span></label>
+            <select id="theme-select">
+                <option value="nimbus-matte-black-1">Nimbus Matte Black</option>
+                <option value="nimbus-dracula">Nimbus Dracula</option>
+                <option value="nimbus-solarized-dark">Nimbus Solarized Dark</option>
+                <option value="grok-light">Grok Light</option>
+                <option value="grok-dark">Grok Dark</option>
+                <option value="nimbus-ocean-breeze">Nimbus Ocean Breeze</option>
+                <option value="nimbus-soft-sand">Nimbus Soft Sand</option>
+                <option value="nimbus-ivory-dawn">Nimbus Ivory Dawn</option>
+                <option value="ghibli-whisper">Ghibli Whisper</option>
+                <option value="ghost-in-the-shell">Ghost in the Shell</option>
+                <option value="ready-player-one">Ready Player One</option>
+                <option value="akira">Akira</option>
+                <option value="back-to-the-future">Back to the Future</option>
+                <option value="blade-runner">Blade Runner</option>
+                <option value="star-wars-sith">Star Wars Sith</option>
+                <option value="star-wars-jedi">Star Wars Jedi</option>
+                <option value="naruto">Naruto</option>
+                <option value="solo-leveling">Solo Leveling</option>
+                <option value="icp-internet-computer">ICP Internet Computer</option>
+                <option value="death-note">Death Note</option>
+            </select>
+        </div>
+        <div class="preferences-item">
+            <label for="custom-theme-upload">Upload Custom Theme<span class="tooltip">Upload a CSS file to create a custom theme</span></label>
+            <input type="file" id="custom-theme-upload" accept=".css" />
+            <button id="upload-theme-btn">Upload</button>
+        </div>
+        <div class="preferences-item">
+            <label>Theme Customizer<span class="tooltip">Customize colors for the UI</span></label>
+        </div>
+        <div class="theme-customizer-grid">
+            <div class="theme-customizer-item">
+                <label for="custom-background">Background</label>
+                <input type="color" id="custom-background" value="#1e1e1e">
+            </div>
+            <div class="theme-customizer-item">
+                <label for="custom-foreground">Foreground</label>
+                <input type="color" id="custom-foreground" value="#cccccc">
+            </div>
+            <div class="theme-customizer-item">
+                <label for="custom-secondary-foreground">Secondary Foreground</label>
+                <input type="color" id="custom-secondary-foreground" value="#888888">
+            </div>
+            <div class="theme-customizer-item">
+                <label for="custom-accent-color">Accent Color</label>
+                <input type="color" id="custom-accent-color" value="#007acc">
+            </div>
+            <div class="theme-customizer-item">
+                <label for="custom-highlight-color">Highlight Color</label>
+                <input type="color" id="custom-highlight-color" value="#ffd700">
+            </div>
+            <div class="theme-customizer-item">
+                <label for="custom-button-bg">Button Background</label>
+                <input type="color" id="custom-button-bg" value="#007acc">
+            </div>
+            <div class="theme-customizer-item">
+                <label for="custom-button-hover-bg">Button Hover</label>
+                <input type="color" id="custom-button-hover-bg" value="#005f99">
+            </div>
+            <div class="theme-customizer-item">
+                <label for="custom-input-bg">Input Background</label>
+                <input type="color" id="custom-input-bg" value="#333333">
+            </div>
+            <div class="theme-customizer-item">
+                <label for="custom-panel-bg">Panel Background</label>
+                <input type="color" id="custom-panel-bg" value="#252526">
+            </div>
+            <div class="theme-customizer-item">
+                <label for="custom-code-block-bg">Code Block Background</label>
+                <input type="color" id="custom-code-block-bg" value="#2a2a2a">
+            </div>
+        </div>
+        <div class="preferences-item">
+            <label for="font-size">Font Size<span class="tooltip">Set the editor font size (e.g., 14)</span></label>
+            <input type="number" id="font-size" value="12" min="8" max="24">
+        </div>
+        <div class="preferences-item">
+            <label for="font-family">Font Family<span class="tooltip">Set the editor font family (e.g., monospace)</span></label>
+            <input type="text" id="font-family" value="monospace">
+        </div>
+        <div class="preferences-item">
+            <label for="line-height">Line Height<span class="tooltip">Set the line height (e.g., 1.5)</span></label>
+            <input type="number" id="line-height" value="1.5" step="0.1" min="1" max="3">
+        </div>
+        <div class="preferences-item">
+            <button class="reset-btn" onclick="resetAppearance()">Reset Appearance</button>
+        </div>
+    </div>
+</div>
+<div class="preferences-section">
+    <h2>Editor</h2>
+    <div class="preferences-section-content">
+        <div class="preferences-item">
+            <label for="tab-size">Tab Size<span class="tooltip">Number of spaces per tab</span></label>
+            <input type="number" id="tab-size" value="4" min="1" max="8">
+        </div>
+        <div class="preferences-item">
+            <label for="word-wrap">Word Wrap<span class="tooltip">Wrap long lines in the editor</span></label>
+            <input type="checkbox" id="word-wrap">
+        </div>
+        <div class="preferences-item">
+            <label for="minimap">Minimap<span class="tooltip">Show a minimap of the code</span></label>
+            <input type="checkbox" id="minimap">
+        </div>
+        <div class="preferences-item">
+            <label for="line-numbers">Line Numbers<span class="tooltip">Show line numbers in the editor</span></label>
+            <input type="checkbox" id="line-numbers" checked>
+        </div>
+        <div class="preferences-item">
+            <label for="bracket-matching">Bracket Matching<span class="tooltip">Highlight matching brackets</span></label>
+            <input type="checkbox" id="bracket-matching" checked>
+        </div>
+        <div class="preferences-item">
+            <label for="auto-indent">Auto Indent<span class="tooltip">Automatically indent code</span></label>
+            <input type="checkbox" id="auto-indent" checked>
+        </div>
+        <div class="preferences-item">
+            <label for="editor-background-color">Editor Background Color<span class="tooltip">Set the editor background color</span></label>
+            <input type="color" id="editor-background-color" value="#1e1e1e">
+        </div>
+        <div class="preferences-item">
+            <label for="custom-css">Custom Editor CSS<span class="tooltip">Apply custom CSS to the editor</span></label>
+            <div class="code-editor">
+                <pre><code class="language-css" id="custom-css-code"></code></pre>
+                <textarea id="custom-css" placeholder="Enter custom CSS for the editor"></textarea>
+            </div>
+        </div>
+        <div class="preferences-item">
+            <button class="reset-btn" onclick="resetEditor()">Reset Editor</button>
+        </div>
+    </div>
+</div>
+<div class="preferences-section">
+    <h2>Terminal</h2>
+    <div class="preferences-section-content">
+        <div class="preferences-item">
+            <label for="terminal-font-size">Font Size<span class="tooltip">Set the terminal font size (e.g., 14)</span></label>
+            <input type="number" id="terminal-font-size" value="12" min="8" max="24">
+        </div>
+        <div class="preferences-item">
+            <label for="terminal-font-family">Font Family<span class="tooltip">Choose or add a custom font for the terminal</span></label>
+            <select id="terminal-font-family">
+                <option value="monospace">Monospace (Default)</option>
+                <option value="Courier New, monospace">Courier New</option>
+                <option value="Consolas, monospace">Consolas</option>
+                <option value="Fira Code, monospace">Fira Code</option>
+                <option value="Source Code Pro, monospace">Source Code Pro</option>
+                <option value="JetBrains Mono, monospace">JetBrains Mono</option>
+                <option value="Hack, monospace">Hack</option>
+                <option value="Inconsolata, monospace">Inconsolata</option>
+                <option value="Ubuntu Mono, monospace">Ubuntu Mono</option>
+                <option value="custom">Custom (Add via URL)</option>
+            </select>
+        </div>
+        <div class="preferences-item" id="custom-terminal-font-url-item" style="display: none;">
+            <label for="terminal-font-url">Custom Font URL<span class="tooltip">Add a font via URL (e.g., from DaFont, Google Fonts)</span></label>
+            <input type="url" id="terminal-font-url" placeholder="e.g., https://fonts.googleapis.com/css2?family=Roboto+Mono">
+        </div>
+        <div class="preferences-item">
+            <label for="terminal-font-color">Font Color<span class="tooltip">Set the terminal text color</span></label>
+            <input type="color" id="terminal-font-color" value="#cccccc">
+        </div>
+        <div class="preferences-item">
+            <label for="terminal-cursor-style">Cursor Style<span class="tooltip">Choose the terminal cursor style</span></label>
+            <select id="terminal-cursor-style">
+                <option value="block">Block</option>
+                <option value="underline">Underline</option>
+                <option value="bar">Bar</option>
+            </select>
+        </div>
+        <div class="preferences-item">
+            <label for="terminal-cursor-color">Cursor Color<span class="tooltip">Set the terminal cursor color</span></label>
+            <input type="color" id="terminal-cursor-color" value="#ffffff">
+        </div>
+        <div class="preferences-item">
+            <label for="terminal-background-color">Background Color<span class="tooltip">Set the terminal background color</span></label>
+            <input type="color" id="terminal-background-color" value="#1e1e1e">
+        </div>
+        <div class="preferences-item">
+            <label for="terminal-wallpaper">Background Wallpaper<span class="tooltip">Upload a wallpaper for the terminal background</span></label>
+            <input type="file" id="terminal-wallpaper" accept="image/*" />
+            <div class="terminal-wallpaper-preview" id="terminal-wallpaper-preview" style="background-image: none;"></div>
+        </div>
+        <div class="preferences-item">
+            <label for="terminal-wallpaper-url">Wallpaper URL<span class="tooltip">Add a wallpaper via URL</span></label>
+            <input type="url" id="terminal-wallpaper-url" placeholder="e.g., https://example.com/wallpaper.jpg">
+        </div>
+        <div class="preferences-item">
+            <label for="terminal-opacity">Background Opacity<span class="tooltip">Set the terminal background opacity (0 to 1)</span></label>
+            <input type="number" id="terminal-opacity" value="1.0" step="0.1" min="0" max="1">
+        </div>
+        <div class="preferences-item">
+            <label for="terminal-custom-commands">Custom Commands<span class="tooltip">Run commands on terminal start (e.g., alias ll='ls -la')</span></label>
+            <div class="code-editor">
+                <pre><code class="language-bash" id="terminal-custom-commands-code"></code></pre>
+                <textarea id="terminal-custom-commands" placeholder="Enter custom terminal commands"></textarea>
+            </div>
+        </div>
+        <div class="preferences-item">
+            <button class="reset-btn" onclick="resetTerminal()">Reset Terminal</button>
+        </div>
+    </div>
+</div>
+<div class="preferences-section">
+    <h2>Advanced Customization</h2>
+    <div class="preferences-section-content">
+        <div class="preferences-item">
+            <label for="custom-js">Custom JavaScript<span class="tooltip">Run custom JS on load (be cautious)</span></label>
+            <div class="code-editor">
+                <pre><code class="language-javascript" id="custom-js-code"></code></pre>
+                <textarea id="custom-js" placeholder="Enter custom JavaScript to run on load"></textarea>
+            </div>
+        </div>
+        <div class="preferences-item">
+            <label for="enable-dev-tools">Enable Dev Tools<span class="tooltip">Show developer tools for debugging</span></label>
+            <input type="checkbox" id="enable-dev-tools">
+        </div>
+        <div class="preferences-item">
+            <label for="custom-keybindings">Custom Keybindings (JSON)<span class="tooltip">Define custom keybindings (e.g., {\"key\": \"ctrl+alt+t\", \"command\": \"openNewTerminal\"})</span></label>
+            <div class="code-editor">
+                <pre><code class="language-json" id="custom-keybindings-code"></code></pre>
+                <textarea id="custom-keybindings" placeholder='{"key": "ctrl+alt+t", "command": "openNewTerminal"}'></textarea>
+            </div>
+        </div>
+        <div class="preferences-item">
+            <label>Save/Load Profile<span class="tooltip">Save or load your customization profile</span></label>
+            <button onclick="saveProfile()">Save Profile</button>
+            <input type="file" id="load-profile" accept=".json" style="margin-left: 8px;" />
+            <button onclick="document.getElementById('load-profile').click()">Load Profile</button>
+        </div>
+        <div class="preferences-item">
+            <button class="reset-btn" onclick="resetAdvanced()">Reset Advanced</button>
+        </div>
+    </div>
+</div>
