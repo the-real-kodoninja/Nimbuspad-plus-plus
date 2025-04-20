@@ -3,7 +3,7 @@ Welcome to Nimbuspad++
 
 Nimbuspad++ is a web-based code editor designed to combine the familiar interface of Visual Studio Code (VSCode) with the powerful editing capabilities of Vim. This guide provides an overview of its features and instructions to get started, helping you navigate and utilize the editor efficiently.
 
-![latest build test]()
+![latest build test](https://github.com/the-real-kodoninja/Nimbuspad-plus-plus/blob/main/captureit_4-20-2025_at_04-34-11.png)
 
 * * * * *
 
